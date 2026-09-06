@@ -1,151 +1,167 @@
 ```javascript
-/* =========================
-   MENU
-========================= */
-
+// القائمة في الموبايل
 const menuBtn = document.getElementById("menuBtn");
 const nav = document.getElementById("nav");
 
 if (menuBtn && nav) {
-  menuBtn.addEventListener("click", function () {
+  menuBtn.onclick = function () {
     nav.classList.toggle("active");
-  });
+  };
 
-  const navLinks = nav.querySelectorAll("a");
-
-  navLinks.forEach(function (link) {
-    link.addEventListener("click", function () {
+  nav.querySelectorAll("a").forEach(function (link) {
+    link.onclick = function () {
       nav.classList.remove("active");
-    });
+    };
   });
 }
 
 
-/* =========================
-   TEXT ANIMATION
-========================= */
+// إضافة CSS للحركات تلقائيًا
+const premiumStyle = document.createElement("style");
 
-const rolesContainer = document.querySelector(".roles");
+premiumStyle.textContent = `
+  .roles {
+    min-height: 35px;
+  }
 
-if (rolesContainer) {
+  .animated-role {
+    display: inline-block;
+    color: #00d4aa;
+    font-weight: 800;
+    font-size: 1.15em;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.7s ease;
+  }
 
-  const words = ["طبيب", "مبرمج", "متداول"];
+  .animated-role.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-  let index = 0;
+  .premium-reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition:
+      opacity 1s ease,
+      transform 1s cubic-bezier(.2,.8,.2,1);
+  }
 
-  rolesContainer.innerHTML = "";
+  .premium-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .photo-card {
+    animation: premiumPhoto 5s ease-in-out infinite;
+  }
+
+  @keyframes premiumPhoto {
+    0%, 100% {
+      transform: rotate(-3deg) translateY(0);
+    }
+
+    50% {
+      transform: rotate(-1deg) translateY(-12px);
+    }
+  }
+
+  .photo-halo {
+    animation: premiumHalo 4s ease-in-out infinite;
+  }
+
+  @keyframes premiumHalo {
+    0%, 100% {
+      transform: scale(.95);
+      opacity: .35;
+    }
+
+    50% {
+      transform: scale(1.08);
+      opacity: .75;
+    }
+  }
+`;
+
+document.head.appendChild(premiumStyle);
+
+
+// كلمة تظهر وراء كلمة
+const roles = document.querySelector(".roles");
+
+if (roles) {
+
+  roles.innerHTML = "";
 
   const word = document.createElement("span");
-  const separator1 = document.createElement("b");
-  const separator2 = document.createElement("b");
-
-  separator1.textContent = " × ";
-  separator2.textContent = " × ";
-
-  rolesContainer.appendChild(word);
 
   word.className = "animated-role";
 
-  function changeWord() {
+  roles.appendChild(word);
+
+  const words = [
+    "طبيب",
+    "مبرمج",
+    "متداول"
+  ];
+
+  let current = 0;
+
+  function changeRole() {
 
     word.classList.remove("show");
 
     setTimeout(function () {
 
-      word.textContent = words[index];
+      word.textContent = words[current];
 
       word.classList.add("show");
 
-      index++;
+      current++;
 
-      if (index >= words.length) {
-        index = 0;
+      if (current >= words.length) {
+        current = 0;
       }
 
-    }, 500);
+    }, 400);
   }
 
-  changeWord();
+  changeRole();
 
-  setInterval(changeWord, 2200);
+  setInterval(changeRole, 2200);
 }
 
 
-/* =========================
-   SCROLL ANIMATION
-========================= */
-
-const animatedSections = document.querySelectorAll(
+// ظهور الأقسام أثناء النزول
+const elements = document.querySelectorAll(
   ".section, .field-card, .skill-box, .about-box, .contact-card, .quote"
 );
 
-if ("IntersectionObserver" in window) {
+elements.forEach(function (element) {
+  element.classList.add("premium-reveal");
+});
 
-  const observer = new IntersectionObserver(
-    function (entries) {
 
-      entries.forEach(function (entry) {
+const observer = new IntersectionObserver(function (entries) {
 
-        if (entry.isIntersecting) {
+  entries.forEach(function (entry) {
 
-          entry.target.classList.add("reveal-show");
+    if (entry.isIntersecting) {
 
-          observer.unobserve(entry.target);
+      entry.target.classList.add("visible");
 
-        }
+      observer.unobserve(entry.target);
 
-      });
-
-    },
-    {
-      threshold: 0.12
     }
-  );
-
-  animatedSections.forEach(function (element) {
-
-    element.classList.add("reveal");
-
-    observer.observe(element);
 
   });
 
-} else {
-
-  animatedSections.forEach(function (element) {
-    element.classList.add("reveal-show");
-  });
-
-}
+}, {
+  threshold: 0.15
+});
 
 
-/* =========================
-   PARTICLES
-========================= */
-
-const particles = document.getElementById("particles");
-
-if (particles) {
-
-  for (let i = 0; i < 45; i++) {
-
-    const particle = document.createElement("span");
-
-    particle.className = "particle";
-
-    particle.style.left =
-      Math.random() * 100 + "%";
-
-    particle.style.top =
-      Math.random() * 100 + "%";
-
-    particle.style.animationDelay =
-      Math.random() * 6 + "s";
-
-    particle.style.animationDuration =
-      5 + Math.random() * 8 + "s";
-
-    particles.appendChild(particle);
-  }
-}
+elements.forEach(function (element) {
+  observer.observe(element);
+});
 ```
