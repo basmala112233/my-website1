@@ -1227,4 +1227,269 @@ footer p {
     transition-duration: 0.01ms !important;
   }
 }
+``````css
+/* =========================================
+   EXTRA PREMIUM ANIMATIONS
+========================================= */
+
+/* ظهور العناصر بالتتابع */
+
+.hero-sequence {
+  opacity: 0;
+  animation: heroSequenceIn 0.9s
+    cubic-bezier(.2,.8,.2,1)
+    forwards;
+}
+
+@keyframes heroSequenceIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+}
+
+
+/* ظهور الأقسام */
+
+.premium-reveal {
+  opacity: 0;
+  transform: translateY(55px);
+  filter: blur(5px);
+
+  transition:
+    opacity 1s ease,
+    transform 1s cubic-bezier(.2,.8,.2,1),
+    filter 1s ease;
+}
+
+.premium-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+
+/* الكروت */
+
+.field-card,
+.skill-box {
+  will-change: transform;
+}
+
+
+/* Progress */
+
+.progress i {
+  width: 0 !important;
+
+  transition:
+    width 1.4s cubic-bezier(.2,.8,.2,1);
+}
+
+
+/* Header عند النزول */
+
+.header {
+  transition:
+    background .35s ease,
+    backdrop-filter .35s ease,
+    border-color .35s ease;
+}
+
+.header.scrolled {
+  background: rgba(5,7,11,.72);
+  backdrop-filter: blur(18px);
+  border-color: rgba(0,212,170,.15);
+}
+
+
+/* الرابط النشط */
+
+.nav a {
+  position: relative;
+}
+
+.nav a::after {
+  content: "";
+
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+
+  width: 0;
+  height: 2px;
+
+  background: #00d4aa;
+
+  transition: width .3s ease;
+}
+
+.nav a:hover::after,
+.nav a.active-link::after {
+  width: 100%;
+}
+
+.nav a.active-link {
+  color: #00d4aa;
+}
+
+
+/* حركة الـ floating tags */
+
+.floating-tag {
+  animation:
+    floatingTag 5s ease-in-out infinite;
+}
+
+.tag-two {
+  animation-delay: -1.5s;
+}
+
+.tag-three {
+  animation-delay: -3s;
+}
+
+@keyframes floatingTag {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-9px);
+  }
+
+}
+
+
+/* لمعة للصورة */
+
+.photo-card::after {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.12),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  animation:
+    photoShine 7s ease-in-out infinite;
+
+  pointer-events: none;
+}
+
+@keyframes photoShine {
+
+  0%,
+  55% {
+    left: -120%;
+  }
+
+  75% {
+    left: 140%;
+  }
+
+  100% {
+    left: 140%;
+  }
+
+}
+
+
+/* تحسين الاقتباس */
+
+.quote-mark {
+  animation:
+    quotePulse 3s ease-in-out infinite;
+}
+
+@keyframes quotePulse {
+
+  0%,
+  100% {
+    opacity: .25;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: .55;
+    transform: scale(1.08);
+  }
+
+}
+
+
+/* دخول الفوتر */
+
+footer {
+  transition:
+    opacity 1s ease,
+    transform 1s ease;
+}
+
+
+/* منع الحركات على الشاشات الصغيرة جدًا */
+
+@media (max-width: 500px) {
+
+  .premium-reveal {
+    transform: translateY(30px);
+  }
+
+  .hero-sequence {
+    animation-duration: .7s;
+  }
+
+}
+
+
+/* احترام إعدادات تقليل الحركة */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .hero-sequence,
+  .premium-reveal,
+  .floating-tag,
+  .photo-card,
+  .photo-halo,
+  .orbit-one,
+  .orbit-two,
+  .orbit-three,
+  .whatsapp-float,
+  .quote-mark {
+    animation: none !important;
+  }
+
+  .hero-sequence,
+  .premium-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+}
 ```
+
