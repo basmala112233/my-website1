@@ -1,167 +1,430 @@
 ```javascript
-// القائمة في الموبايل
-const menuBtn = document.getElementById("menuBtn");
-const nav = document.getElementById("nav");
+/* =========================================
+   PREMIUM PORTFOLIO JAVASCRIPT
+   DR. MOHAMED ALI
+========================================= */
 
-if (menuBtn && nav) {
-  menuBtn.onclick = function () {
-    nav.classList.toggle("active");
-  };
+document.addEventListener("DOMContentLoaded", () => {
 
-  nav.querySelectorAll("a").forEach(function (link) {
-    link.onclick = function () {
-      nav.classList.remove("active");
-    };
+  /* =========================================
+     MOBILE MENU
+  ========================================= */
+
+  const menuBtn = document.getElementById("menuBtn");
+  const nav = document.getElementById("nav");
+
+  if (menuBtn && nav) {
+
+    menuBtn.addEventListener("click", () => {
+      nav.classList.toggle("active");
+    });
+
+    nav.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        nav.classList.remove("active");
+      });
+    });
+  }
+
+
+  /* =========================================
+     TYPING / ROLE ANIMATION
+  ========================================= */
+
+  const rolesContainer = document.querySelector(".roles");
+
+  if (rolesContainer) {
+
+    const words = [
+      "طبيب",
+      "مبرمج",
+      "متداول"
+    ];
+
+    rolesContainer.innerHTML = `
+      <span class="animated-role"></span>
+    `;
+
+    const roleElement =
+      rolesContainer.querySelector(".animated-role");
+
+    let currentRole = 0;
+
+    function showRole() {
+
+      roleElement.classList.remove("show");
+
+      setTimeout(() => {
+
+        roleElement.textContent =
+          words[currentRole];
+
+        roleElement.classList.add("show");
+
+        currentRole++;
+
+        if (currentRole >= words.length) {
+          currentRole = 0;
+        }
+
+      }, 350);
+    }
+
+    showRole();
+
+    setInterval(showRole, 2300);
+  }
+
+
+  /* =========================================
+     PREMIUM REVEAL SYSTEM
+  ========================================= */
+
+  const revealElements = document.querySelectorAll(`
+    .section,
+    .about-box,
+    .field-card,
+    .skill-box,
+    .quote,
+    .contact-card,
+    footer
+  `);
+
+  revealElements.forEach(element => {
+    element.classList.add("premium-reveal");
   });
-}
 
 
-// إضافة CSS للحركات تلقائيًا
-const premiumStyle = document.createElement("style");
+  const revealObserver =
+    new IntersectionObserver((entries, observer) => {
 
-premiumStyle.textContent = `
-  .roles {
-    min-height: 35px;
-  }
+      entries.forEach(entry => {
 
-  .animated-role {
-    display: inline-block;
-    color: #00d4aa;
-    font-weight: 800;
-    font-size: 1.15em;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.7s ease;
-  }
+        if (!entry.isIntersecting) return;
 
-  .animated-role.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
+        entry.target.classList.add("visible");
 
-  .premium-reveal {
-    opacity: 0;
-    transform: translateY(50px);
-    transition:
-      opacity 1s ease,
-      transform 1s cubic-bezier(.2,.8,.2,1);
-  }
+        observer.unobserve(entry.target);
 
-  .premium-reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+      });
 
-  .photo-card {
-    animation: premiumPhoto 5s ease-in-out infinite;
-  }
-
-  @keyframes premiumPhoto {
-    0%, 100% {
-      transform: rotate(-3deg) translateY(0);
-    }
-
-    50% {
-      transform: rotate(-1deg) translateY(-12px);
-    }
-  }
-
-  .photo-halo {
-    animation: premiumHalo 4s ease-in-out infinite;
-  }
-
-  @keyframes premiumHalo {
-    0%, 100% {
-      transform: scale(.95);
-      opacity: .35;
-    }
-
-    50% {
-      transform: scale(1.08);
-      opacity: .75;
-    }
-  }
-`;
-
-document.head.appendChild(premiumStyle);
+    }, {
+      threshold: 0.12,
+      rootMargin: "0px 0px -60px 0px"
+    });
 
 
-// كلمة تظهر وراء كلمة
-const roles = document.querySelector(".roles");
+  revealElements.forEach(element => {
+    revealObserver.observe(element);
+  });
 
-if (roles) {
 
-  roles.innerHTML = "";
+  /* =========================================
+     STAGGER CARDS
+  ========================================= */
 
-  const word = document.createElement("span");
+  const cards = document.querySelectorAll(".field-card");
 
-  word.className = "animated-role";
+  cards.forEach((card, index) => {
 
-  roles.appendChild(word);
+    card.style.transitionDelay =
+      `${index * 0.15}s`;
 
-  const words = [
-    "طبيب",
-    "مبرمج",
-    "متداول"
+  });
+
+
+  /* =========================================
+     STAGGER SKILLS
+  ========================================= */
+
+  const skillBoxes =
+    document.querySelectorAll(".skill-box");
+
+  skillBoxes.forEach((box, index) => {
+
+    box.style.transitionDelay =
+      `${index * 0.18}s`;
+
+  });
+
+
+  /* =========================================
+     HERO ELEMENTS
+  ========================================= */
+
+  const heroItems = [
+    ".eyebrow",
+    ".hero h1",
+    ".roles",
+    ".hero-text",
+    ".hero-actions",
+    ".stats"
   ];
 
-  let current = 0;
+  heroItems.forEach((selector, index) => {
 
-  function changeRole() {
+    const element =
+      document.querySelector(selector);
 
-    word.classList.remove("show");
+    if (!element) return;
 
-    setTimeout(function () {
+    element.classList.add("hero-sequence");
 
-      word.textContent = words[current];
+    element.style.animationDelay =
+      `${0.15 + index * 0.14}s`;
 
-      word.classList.add("show");
+  });
 
-      current++;
 
-      if (current >= words.length) {
-        current = 0;
-      }
+  /* =========================================
+     PROGRESS BAR ANIMATION
+  ========================================= */
 
-    }, 400);
+  const progressBars =
+    document.querySelectorAll(".progress i");
+
+  progressBars.forEach(bar => {
+
+    const finalWidth =
+      bar.style.width;
+
+    bar.dataset.width = finalWidth;
+
+    bar.style.width = "0%";
+
+  });
+
+
+  const progressObserver =
+    new IntersectionObserver((entries, observer) => {
+
+      entries.forEach(entry => {
+
+        if (!entry.isIntersecting) return;
+
+        const bars =
+          entry.target.querySelectorAll(".progress i");
+
+        bars.forEach((bar, index) => {
+
+          setTimeout(() => {
+
+            bar.style.width =
+              bar.dataset.width;
+
+          }, index * 250);
+
+        });
+
+        observer.unobserve(entry.target);
+
+      });
+
+    }, {
+      threshold: 0.3
+    });
+
+
+  document.querySelectorAll(".skill-box")
+    .forEach(box => {
+      progressObserver.observe(box);
+    });
+
+
+  /* =========================================
+     PARTICLES
+  ========================================= */
+
+  const particlesContainer =
+    document.getElementById("particles");
+
+  if (particlesContainer) {
+
+    const particleCount =
+      window.innerWidth < 600 ? 25 : 45;
+
+    for (let i = 0; i < particleCount; i++) {
+
+      const particle =
+        document.createElement("span");
+
+      particle.className = "particle";
+
+      particle.style.left =
+        Math.random() * 100 + "%";
+
+      particle.style.top =
+        Math.random() * 100 + "%";
+
+      const size =
+        Math.random() * 2 + 1;
+
+      particle.style.width =
+        `${size}px`;
+
+      particle.style.height =
+        `${size}px`;
+
+      particle.style.animationDuration =
+        `${4 + Math.random() * 7}s`;
+
+      particle.style.animationDelay =
+        `${Math.random() * 5}s`;
+
+      particlesContainer.appendChild(particle);
+    }
   }
 
-  changeRole();
 
-  setInterval(changeRole, 2200);
-}
+  /* =========================================
+     HEADER SCROLL EFFECT
+  ========================================= */
 
+  const header =
+    document.querySelector(".header");
 
-// ظهور الأقسام أثناء النزول
-const elements = document.querySelectorAll(
-  ".section, .field-card, .skill-box, .about-box, .contact-card, .quote"
-);
+  window.addEventListener("scroll", () => {
 
-elements.forEach(function (element) {
-  element.classList.add("premium-reveal");
-});
+    if (!header) return;
 
+    if (window.scrollY > 40) {
 
-const observer = new IntersectionObserver(function (entries) {
+      header.classList.add("scrolled");
 
-  entries.forEach(function (entry) {
+    } else {
 
-    if (entry.isIntersecting) {
-
-      entry.target.classList.add("visible");
-
-      observer.unobserve(entry.target);
+      header.classList.remove("scrolled");
 
     }
 
   });
 
-}, {
-  threshold: 0.15
-});
+
+  /* =========================================
+     ACTIVE NAV LINK
+  ========================================= */
+
+  const sections =
+    document.querySelectorAll("main section[id]");
+
+  const navLinks =
+    document.querySelectorAll(".nav a");
+
+  const navObserver =
+    new IntersectionObserver((entries) => {
+
+      entries.forEach(entry => {
+
+        if (!entry.isIntersecting) return;
+
+        navLinks.forEach(link => {
+          link.classList.remove("active-link");
+        });
+
+        const activeLink =
+          document.querySelector(
+            `.nav a[href="#${entry.target.id}"]`
+          );
+
+        if (activeLink) {
+          activeLink.classList.add("active-link");
+        }
+
+      });
+
+    }, {
+      threshold: 0.45
+    });
 
 
-elements.forEach(function (element) {
-  observer.observe(element);
+  sections.forEach(section => {
+    navObserver.observe(section);
+  });
+
+
+  /* =========================================
+     PREMIUM CARD TILT
+  ========================================= */
+
+  const tiltCards =
+    document.querySelectorAll(
+      ".field-card, .skill-box"
+    );
+
+  if (window.innerWidth > 850) {
+
+    tiltCards.forEach(card => {
+
+      card.addEventListener("mousemove", e => {
+
+        const rect =
+          card.getBoundingClientRect();
+
+        const x =
+          e.clientX - rect.left;
+
+        const y =
+          e.clientY - rect.top;
+
+        const centerX =
+          rect.width / 2;
+
+        const centerY =
+          rect.height / 2;
+
+        const rotateX =
+          ((y - centerY) / centerY) * -3;
+
+        const rotateY =
+          ((x - centerX) / centerX) * 3;
+
+        card.style.transform =
+          `perspective(900px)
+           rotateX(${rotateX}deg)
+           rotateY(${rotateY}deg)
+           translateY(-5px)`;
+
+      });
+
+      card.addEventListener("mouseleave", () => {
+
+        card.style.transform =
+          "";
+
+      });
+
+    });
+
+  }
+
+
+  /* =========================================
+     SMOOTH SCROLL
+  ========================================= */
+
+  document.querySelectorAll('a[href^="#"]')
+    .forEach(link => {
+
+      link.addEventListener("click", e => {
+
+        const targetId =
+          link.getAttribute("href");
+
+        const target =
+          document.querySelector(targetId);
+
+        if (!target) return;
+
+        e.preventDefault();
+
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      });
+
+    });
+
 });
 ```
