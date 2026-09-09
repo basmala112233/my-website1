@@ -1,76 +1,102 @@
 ```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>لوحة تحكم د. محمد علي</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
 font-family:Arial,sans-serif;
 background:#05070b;
 color:white;
 padding:25px;
 }
+
 .container{
-max-width:900px;
+width:min(900px,100%);
 margin:auto;
 }
+
 h1{
-margin-bottom:10px;
 color:#00d4aa;
+margin-bottom:10px;
 }
-p{
+
+.subtitle{
 color:#8993a2;
 margin-bottom:30px;
 }
+
 .card{
 background:#0b1118;
 border:1px solid #1d2732;
-border-radius:15px;
+border-radius:16px;
 padding:25px;
-margin-bottom:20px;
 }
+
 label{
 display:block;
+color:#b7c0cc;
 margin-bottom:18px;
-color:#aeb7c4;
 }
-input,textarea{
+
+input,
+textarea{
 width:100%;
 margin-top:8px;
-padding:13px;
-border-radius:8px;
-border:1px solid #26313d;
+padding:14px;
 background:#070a0f;
+border:1px solid #26313d;
+border-radius:8px;
 color:white;
 font-size:15px;
+outline:none;
 }
+
+input:focus,
+textarea:focus{
+border-color:#00d4aa;
+}
+
 textarea{
 min-height:120px;
 resize:vertical;
 }
+
 button{
 width:100%;
 padding:15px;
+margin-top:10px;
 border:0;
 border-radius:9px;
 background:#00d4aa;
 color:#03100d;
-font-weight:bold;
 font-size:16px;
+font-weight:bold;
 cursor:pointer;
 }
+
 button:hover{
 background:#10e0b8;
 }
+
 #message{
-margin-top:15px;
 text-align:center;
-color:#00d4aa;
+margin-top:18px;
+font-weight:bold;
 }
+
 </style>
 </head>
 
@@ -79,43 +105,47 @@ color:#00d4aa;
 <div class="container">
 
 <h1>لوحة تحكم د. محمد علي</h1>
-<p>عدّل بيانات الموقع واضغط حفظ.</p>
+
+<p class="subtitle">
+من هنا تقدر تعدل بيانات موقعك
+</p>
 
 <div class="card">
 
 <label>
 الاسم
-<input id="name">
+<input id="name" placeholder="محمد علي">
 </label>
 
 <label>
 المسمى
-<input id="roles">
+<input id="roles" placeholder="طبيب × مبرمج × متداول">
 </label>
 
 <label>
 الوصف
-<textarea id="description"></textarea>
+<textarea id="description"
+placeholder="اكتب وصف الموقع هنا"></textarea>
 </label>
 
 <label>
 رابط الصورة
-<input id="photo">
+<input id="photo" placeholder="https://...">
 </label>
 
 <label>
 المجال الأول
-<input id="field1">
+<input id="field1" placeholder="الطب">
 </label>
 
 <label>
 المجال الثاني
-<input id="field2">
+<input id="field2" placeholder="البرمجة">
 </label>
 
 <label>
 المجال الثالث
-<input id="field3">
+<input id="field3" placeholder="التداول">
 </label>
 
 <label>
@@ -135,26 +165,29 @@ UI / UX %
 
 <label>
 رقم الهاتف
-<input id="phone">
+<input id="phone" placeholder="+20 128 168 9551">
 </label>
 
 <label>
-رقم واتساب
-<input id="whatsapp">
+رقم واتساب بدون +
+<input id="whatsapp" placeholder="201281689551">
 </label>
 
 <label>
 اللون الرئيسي
-<input id="color" type="color">
+<input id="color" type="color" value="#00d4aa">
 </label>
 
-<button id="save">حفظ التعديلات</button>
+<button id="save">
+حفظ التعديلات
+</button>
 
 <div id="message"></div>
 
 </div>
 
 </div>
+
 
 <script>
 
@@ -164,18 +197,34 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_McRUA7P1sOfa_x2LPxQB7A_kEmhJ-Vc";
 
+const TABLE =
+"site_content";
+
 const API =
-SUPABASE_URL + "/rest/v1/site_content?id=eq.1";
+SUPABASE_URL +
+"/rest/v1/" +
+TABLE +
+"?id=eq.1";
 
 
 const headers = {
+
 "apikey": SUPABASE_KEY,
-"Authorization": "Bearer " + SUPABASE_KEY,
-"Content-Type": "application/json"
+
+"Authorization":
+"Bearer " + SUPABASE_KEY,
+
+"Content-Type":
+"application/json",
+
+"Prefer":
+"return=representation"
+
 };
 
 
 const fields = [
+
 "name",
 "roles",
 "description",
@@ -189,49 +238,76 @@ const fields = [
 "phone",
 "whatsapp",
 "color"
+
 ];
 
 
 async function loadData(){
 
+const message =
+document.getElementById("message");
+
 try{
 
-const response = await fetch(
-SUPABASE_URL + "/rest/v1/site_content?id=eq.1",
-{
-headers:{
-"apikey":SUPABASE_KEY,
-"Authorization":"Bearer "+SUPABASE_KEY
-}
+message.textContent =
+"جاري تحميل البيانات...";
+
+const response =
+await fetch(API,{
+method:"GET",
+headers:headers
 });
 
-const data = await response.json();
+if(!response.ok){
 
-if(!data.length){
-document.getElementById("message").textContent =
-"لم يتم العثور على البيانات";
-return;
+throw new Error(
+await response.text()
+);
+
 }
 
-const item = data[0];
+const data =
+await response.json();
+
+if(!data.length){
+
+message.textContent =
+"⚠️ لا يوجد سجل id = 1 في قاعدة البيانات";
+
+return;
+
+}
+
+const item =
+data[0];
 
 fields.forEach(field=>{
 
 const input =
 document.getElementById(field);
 
-if(input && item[field] !== null){
-input.value = item[field];
+if(input){
+
+input.value =
+item[field] ?? "";
+
 }
 
 });
 
+message.textContent =
+"✅ تم تحميل البيانات";
+
+setTimeout(()=>{
+message.textContent="";
+},2000);
+
 }catch(error){
 
-document.getElementById("message").textContent =
-"حدث خطأ في الاتصال بقاعدة البيانات";
-
 console.error(error);
+
+message.textContent =
+"❌ حدث خطأ في تحميل البيانات";
 
 }
 
@@ -239,6 +315,9 @@ console.error(error);
 
 
 async function saveData(){
+
+const message =
+document.getElementById("message");
 
 const data = {};
 
@@ -248,47 +327,51 @@ const input =
 document.getElementById(field);
 
 if(input){
-data[field] = input.value;
+
+data[field] =
+input.value;
+
 }
 
 });
+
 
 try{
 
-const response = await fetch(
-API,
-{
+message.textContent =
+"جاري الحفظ...";
+
+const response =
+await fetch(API,{
+
 method:"PATCH",
-headers:{
-...headers,
-"Prefer":"return=minimal"
-},
-body:JSON.stringify(data)
+
+headers:headers,
+
+body:
+JSON.stringify(data)
+
 });
 
-if(response.ok){
 
-document.getElementById("message").textContent =
-"✅ تم حفظ التعديلات بنجاح";
+if(!response.ok){
 
-}else{
-
-const error =
-await response.text();
-
-console.error(error);
-
-document.getElementById("message").textContent =
-"❌ حدث خطأ أثناء الحفظ";
+throw new Error(
+await response.text()
+);
 
 }
+
+message.textContent =
+"✅ تم حفظ التعديلات بنجاح";
 
 }catch(error){
 
 console.error(error);
 
-document.getElementById("message").textContent =
-"❌ لا يوجد اتصال بقاعدة البيانات";
+message.textContent =
+"❌ فشل الحفظ: " +
+error.message;
 
 }
 
@@ -297,7 +380,10 @@ document.getElementById("message").textContent =
 
 document
 .getElementById("save")
-.addEventListener("click",saveData);
+.addEventListener(
+"click",
+saveData
+);
 
 
 loadData();
