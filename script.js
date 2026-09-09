@@ -1,15 +1,111 @@
+```javascript
 document.addEventListener("DOMContentLoaded", () => {
-  const menuBtn = document.getElementById("menuBtn");
-  const nav = document.getElementById("nav");
-  const header = document.querySelector(".header");
+
+  /* =========================
+     SETTINGS
+  ========================= */
+
+  const defaultSettings = {
+    name: "محمد علي",
+    description:
+      "شغوف بالطب والتكنولوجيا والأسواق المالية، وأسعى لصناعة مستقبل يجمع بين العلم والإبداع والتكنولوجيا.",
+    photo:
+      "https://i.ibb.co/BxK1s4K/IMG-20260902-WA0141.jpg",
+    whatsapp: "201281689551",
+    phone: "+20 128 168 9551",
+    color: "#00d4aa",
+
+    htmlSkill: 90,
+    jsSkill: 80,
+    uiSkill: 85
+  };
+
+  const saved =
+    JSON.parse(localStorage.getItem("doctorWebsiteSettings") || "{}");
+
+  const settings = {
+    ...defaultSettings,
+    ...saved
+  };
+
+
+  /* =========================
+     APPLY SETTINGS
+  ========================= */
+
+  const heroName = document.querySelector(".hero h1");
+  if (heroName) {
+    heroName.innerHTML = `
+      <span>د.</span>
+      ${settings.name.split(" ")[0] || ""}
+      <strong>
+        ${settings.name.split(" ").slice(1).join(" ") || ""}
+      </strong>
+    `;
+  }
+
+  const description =
+    document.querySelector(".hero-text");
+
+  if (description) {
+    description.textContent = settings.description;
+  }
+
+
+  /* الصورة */
+
+  const photo =
+    document.querySelector(".photo-card img");
+
+  if (photo) {
+    photo.src = settings.photo;
+  }
+
+
+  /* الواتساب */
+
+  document.querySelectorAll(
+    'a[href*="wa.me"]'
+  ).forEach(link => {
+    link.href = `https://wa.me/${settings.whatsapp}`;
+  });
+
+
+  /* رقم الهاتف */
+
+  const phone =
+    document.querySelector(".contact-number strong");
+
+  if (phone) {
+    phone.textContent = settings.phone;
+  }
+
+
+  /* اللون */
+
+  document.documentElement.style.setProperty(
+    "--main-color",
+    settings.color
+  );
+
 
   /* =========================
      MOBILE MENU
   ========================= */
 
+  const menuBtn =
+    document.getElementById("menuBtn");
+
+  const nav =
+    document.getElementById("nav");
+
   menuBtn?.addEventListener("click", () => {
     nav?.classList.toggle("active");
-    menuBtn.textContent = nav?.classList.contains("active") ? "✕" : "☰";
+
+    menuBtn.textContent =
+      nav?.classList.contains("active")
+        ? "✕"
+        : "☰";
   });
 
   nav?.querySelectorAll("a").forEach(link => {
@@ -21,35 +117,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================
-     TYPING ROLES
+     HERO ROLES
   ========================= */
 
-  const roles = ["طبيب", "مبرمج", "متداول"];
-  const rolesContainer = document.querySelector(".roles");
+  const rolesContainer =
+    document.querySelector(".roles");
 
   if (rolesContainer) {
-    rolesContainer.innerHTML = `
-      <span class="animated-role"></span>
-      <b>×</b>
-      <span>شغف</span>
-    `;
 
-    const roleElement = rolesContainer.querySelector(".animated-role");
+    const roles = [
+      "طبيب",
+      "مبرمج",
+      "متداول"
+    ];
+
+    const role =
+      rolesContainer.querySelector(".animated-role") ||
+      document.createElement("span");
+
+    role.className = "animated-role";
+
+    rolesContainer.innerHTML = "";
+    rolesContainer.appendChild(role);
+
     let index = 0;
 
     function changeRole() {
-      roleElement.style.opacity = "0";
-      roleElement.style.transform = "translateY(15px)";
+
+      role.style.opacity = "0";
+      role.style.transform =
+        "translateY(15px)";
 
       setTimeout(() => {
-        roleElement.textContent = roles[index];
-        roleElement.style.opacity = "1";
-        roleElement.style.transform = "translateY(0)";
-        index = (index + 1) % roles.length;
-      }, 350);
+
+        role.textContent =
+          roles[index];
+
+        role.style.opacity = "1";
+        role.style.transform =
+          "translateY(0)";
+
+        index =
+          (index + 1) % roles.length;
+
+      }, 300);
     }
 
     changeRole();
+
     setInterval(changeRole, 2200);
   }
 
@@ -58,24 +173,41 @@ document.addEventListener("DOMContentLoaded", () => {
      PARTICLES
   ========================= */
 
-  const particles = document.getElementById("particles");
+  const particles =
+    document.getElementById("particles");
 
   if (particles) {
-    const count = window.innerWidth <= 600 ? 25 : 55;
+
+    const count =
+      window.innerWidth < 600
+        ? 25
+        : 50;
 
     for (let i = 0; i < count; i++) {
-      const particle = document.createElement("span");
+
+      const particle =
+        document.createElement("span");
 
       particle.className = "particle";
 
-      const size = Math.random() * 2 + 1;
+      const size =
+        Math.random() * 2 + 1;
 
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
-      particle.style.left = `${Math.random() * 100}%`;
-      particle.style.top = `${Math.random() * 100}%`;
+      particle.style.width =
+        `${size}px`;
+
+      particle.style.height =
+        `${size}px`;
+
+      particle.style.left =
+        `${Math.random() * 100}%`;
+
+      particle.style.top =
+        `${Math.random() * 100}%`;
+
       particle.style.animationDuration =
         `${4 + Math.random() * 7}s`;
+
       particle.style.animationDelay =
         `${Math.random() * 5}s`;
 
@@ -85,37 +217,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================
-     SCROLL REVEAL
+     REVEAL
   ========================= */
 
-  const revealElements = document.querySelectorAll(`
-    .section,
-    .about-box,
-    .field-card,
-    .skill-box,
-    .quote,
-    .contact-card,
-    footer
-  `);
+  const revealElements =
+    document.querySelectorAll(`
+      .section,
+      .about-box,
+      .field-card,
+      .skill-box,
+      .quote,
+      .contact-card,
+      footer
+    `);
 
   revealElements.forEach(el => {
     el.classList.add("premium-reveal");
   });
 
-  const revealObserver = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.12,
-      rootMargin: "0px 0px -50px 0px"
-    }
-  );
+  const revealObserver =
+    new IntersectionObserver(
+      entries => {
+
+        entries.forEach(entry => {
+
+          if (!entry.isIntersecting)
+            return;
+
+          entry.target.classList.add(
+            "visible"
+          );
+
+          revealObserver.unobserve(
+            entry.target
+          );
+
+        });
+
+      },
+      {
+        threshold: 0.12
+      }
+    );
 
   revealElements.forEach(el => {
     revealObserver.observe(el);
@@ -123,80 +266,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================
-     HERO ANIMATION
-  ========================= */
-
-  const heroItems = [
-    ".eyebrow",
-    ".hero h1",
-    ".roles",
-    ".hero-text",
-    ".hero-actions",
-    ".stats"
-  ];
-
-  heroItems.forEach((selector, index) => {
-    const element = document.querySelector(selector);
-
-    if (!element) return;
-
-    element.classList.add("hero-sequence");
-    element.style.animationDelay =
-      `${0.15 + index * 0.14}s`;
-  });
-
-
-  /* =========================
      PROGRESS BARS
   ========================= */
 
-  const progressBars =
-    document.querySelectorAll(".progress i");
+  const skills = {
+    ".skill-box:nth-child(1) .skill-row:nth-child(1) i":
+      settings.htmlSkill + "%",
 
-  progressBars.forEach(bar => {
-    bar.dataset.width = bar.style.width;
-    bar.style.width = "0%";
-  });
+    ".skill-box:nth-child(1) .skill-row:nth-child(2) i":
+      settings.jsSkill + "%",
 
-  const progressObserver = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
+    ".skill-box:nth-child(1) .skill-row:nth-child(3) i":
+      settings.uiSkill + "%"
+  };
 
-        const bars =
-          entry.target.querySelectorAll(".progress i");
+  Object.entries(skills).forEach(
+    ([selector, value]) => {
 
-        bars.forEach((bar, index) => {
-          setTimeout(() => {
-            bar.style.width = bar.dataset.width;
-          }, index * 250);
-        });
+      const bar =
+        document.querySelector(selector);
 
-        progressObserver.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.3 }
+      if (bar) {
+        bar.style.width = value;
+        bar.dataset.width = value;
+      }
+
+    }
   );
-
-  document.querySelectorAll(".skill-box")
-    .forEach(box => progressObserver.observe(box));
 
 
   /* =========================
-     HEADER SCROLL
+     HEADER
   ========================= */
 
-  function updateHeader() {
-    if (!header) return;
+  const header =
+    document.querySelector(".header");
 
-    header.classList.toggle(
+  window.addEventListener("scroll", () => {
+
+    header?.classList.toggle(
       "scrolled",
       window.scrollY > 40
     );
-  }
 
-  window.addEventListener("scroll", updateHeader);
-  updateHeader();
+  });
 
 
   /* =========================
@@ -204,32 +317,44 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================= */
 
   const sections =
-    document.querySelectorAll("main section[id]");
+    document.querySelectorAll(
+      "main section[id]"
+    );
 
   const navLinks =
     document.querySelectorAll(".nav a");
 
-  const navObserver = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
+  const navObserver =
+    new IntersectionObserver(
+      entries => {
 
-        navLinks.forEach(link =>
-          link.classList.remove("active-link")
-        );
+        entries.forEach(entry => {
 
-        const active =
-          document.querySelector(
-            `.nav a[href="#${entry.target.id}"]`
+          if (!entry.isIntersecting)
+            return;
+
+          navLinks.forEach(link =>
+            link.classList.remove(
+              "active-link"
+            )
           );
 
-        active?.classList.add("active-link");
-      });
-    },
-    {
-      threshold: 0.45
-    }
-  );
+          const active =
+            document.querySelector(
+              `.nav a[href="#${entry.target.id}"]`
+            );
+
+          active?.classList.add(
+            "active-link"
+          );
+
+        });
+
+      },
+      {
+        threshold: 0.45
+      }
+    );
 
   sections.forEach(section =>
     navObserver.observe(section)
@@ -241,34 +366,49 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================= */
 
   if (window.innerWidth > 850) {
+
     document
-      .querySelectorAll(".field-card, .skill-box")
+      .querySelectorAll(
+        ".field-card, .skill-box"
+      )
       .forEach(card => {
 
-        card.addEventListener("mousemove", e => {
-          const rect = card.getBoundingClientRect();
+        card.addEventListener(
+          "mousemove",
+          e => {
 
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
+            const rect =
+              card.getBoundingClientRect();
 
-          const rotateX =
-            ((y - rect.height / 2) /
-              (rect.height / 2)) * -3;
+            const x =
+              e.clientX - rect.left;
 
-          const rotateY =
-            ((x - rect.width / 2) /
-              (rect.width / 2)) * 3;
+            const y =
+              e.clientY - rect.top;
 
-          card.style.transform =
-            `perspective(900px)
-             rotateX(${rotateX}deg)
-             rotateY(${rotateY}deg)
-             translateY(-5px)`;
-        });
+            const rotateX =
+              ((y - rect.height / 2) /
+                (rect.height / 2)) * -3;
 
-        card.addEventListener("mouseleave", () => {
-          card.style.transform = "";
-        });
+            const rotateY =
+              ((x - rect.width / 2) /
+                (rect.width / 2)) * 3;
+
+            card.style.transform =
+              `perspective(900px)
+               rotateX(${rotateX}deg)
+               rotateY(${rotateY}deg)
+               translateY(-5px)`;
+          }
+        );
+
+        card.addEventListener(
+          "mouseleave",
+          () => {
+            card.style.transform = "";
+          }
+        );
+
       });
   }
 
@@ -277,38 +417,33 @@ document.addEventListener("DOMContentLoaded", () => {
      SMOOTH SCROLL
   ========================= */
 
-  document.querySelectorAll('a[href^="#"]')
+  document
+    .querySelectorAll(
+      'a[href^="#"]'
+    )
     .forEach(link => {
 
-      link.addEventListener("click", e => {
-        const id = link.getAttribute("href");
-        const target = document.querySelector(id);
+      link.addEventListener(
+        "click",
+        e => {
 
-        if (!target) return;
+          const target =
+            document.querySelector(
+              link.getAttribute("href")
+            );
 
-        e.preventDefault();
+          if (!target) return;
 
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      });
+          e.preventDefault();
+
+          target.scrollIntoView({
+            behavior: "smooth"
+          });
+
+        }
+      );
 
     });
 
-
-  /* =========================
-     ESC CLOSE MENU
-  ========================= */
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape") {
-      nav?.classList.remove("active");
-
-      if (menuBtn) {
-        menuBtn.textContent = "☰";
-      }
-    }
-  });
-
 });
+```
