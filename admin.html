@@ -3,216 +3,307 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة تحكم د. محمد علي</title>
-<link rel="stylesheet" href="admin.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+font-family:Arial,sans-serif;
+background:#05070b;
+color:white;
+padding:25px;
+}
+.container{
+max-width:900px;
+margin:auto;
+}
+h1{
+margin-bottom:10px;
+color:#00d4aa;
+}
+p{
+color:#8993a2;
+margin-bottom:30px;
+}
+.card{
+background:#0b1118;
+border:1px solid #1d2732;
+border-radius:15px;
+padding:25px;
+margin-bottom:20px;
+}
+label{
+display:block;
+margin-bottom:18px;
+color:#aeb7c4;
+}
+input,textarea{
+width:100%;
+margin-top:8px;
+padding:13px;
+border-radius:8px;
+border:1px solid #26313d;
+background:#070a0f;
+color:white;
+font-size:15px;
+}
+textarea{
+min-height:120px;
+resize:vertical;
+}
+button{
+width:100%;
+padding:15px;
+border:0;
+border-radius:9px;
+background:#00d4aa;
+color:#03100d;
+font-weight:bold;
+font-size:16px;
+cursor:pointer;
+}
+button:hover{
+background:#10e0b8;
+}
+#message{
+margin-top:15px;
+text-align:center;
+color:#00d4aa;
+}
+</style>
 </head>
 
 <body>
 
-<div class="dashboard">
+<div class="container">
 
-<aside>
-  <div class="logo"><span>DR.</span> MOHAMED ALI</div>
+<h1>لوحة تحكم د. محمد علي</h1>
+<p>عدّل بيانات الموقع واضغط حفظ.</p>
 
-  <div class="profile">
-    <div class="avatar">MA</div>
-    <div>
-      <b>د. محمد علي</b>
-      <small>لوحة التحكم</small>
-    </div>
-  </div>
+<div class="card">
 
-  <nav>
-    <a href="#general">⚙️ البيانات الأساسية</a>
-    <a href="#fields">🎯 المجالات</a>
-    <a href="#skills">📊 المهارات</a>
-    <a href="#contact">📱 التواصل</a>
-    <a href="#design">🎨 التصميم</a>
-  </nav>
+<label>
+الاسم
+<input id="name">
+</label>
 
-  <a class="site-btn" href="index.html" target="_blank">
-    🌐 فتح الموقع
-  </a>
-</aside>
+<label>
+المسمى
+<input id="roles">
+</label>
 
+<label>
+الوصف
+<textarea id="description"></textarea>
+</label>
 
-<main>
+<label>
+رابط الصورة
+<input id="photo">
+</label>
 
-<header>
-  <div>
-    <small>ADMIN PANEL</small>
-    <h1>لوحة التحكم</h1>
-  </div>
+<label>
+المجال الأول
+<input id="field1">
+</label>
 
-  <button id="save">💾 حفظ التعديلات</button>
-</header>
+<label>
+المجال الثاني
+<input id="field2">
+</label>
+
+<label>
+المجال الثالث
+<input id="field3">
+</label>
+
+<label>
+HTML / CSS %
+<input id="html_skill" type="number" min="0" max="100">
+</label>
+
+<label>
+JavaScript %
+<input id="js_skill" type="number" min="0" max="100">
+</label>
+
+<label>
+UI / UX %
+<input id="ui_skill" type="number" min="0" max="100">
+</label>
+
+<label>
+رقم الهاتف
+<input id="phone">
+</label>
+
+<label>
+رقم واتساب
+<input id="whatsapp">
+</label>
+
+<label>
+اللون الرئيسي
+<input id="color" type="color">
+</label>
+
+<button id="save">حفظ التعديلات</button>
 
 <div id="message"></div>
 
-
-<section class="card" id="general">
-
-  <div class="title">
-    <div>
-      <small>01 / GENERAL</small>
-      <h2>البيانات الأساسية</h2>
-    </div>
-  </div>
-
-  <div class="grid">
-
-    <label>
-      الاسم
-      <input id="name" value="محمد علي">
-    </label>
-
-    <label>
-      المسمى
-      <input id="roles" value="طبيب × مبرمج × متداول">
-    </label>
-
-    <label class="full">
-      الوصف
-      <textarea id="description">شغوف بالطب والتكنولوجيا والأسواق المالية، وأسعى لصناعة مستقبل يجمع بين العلم والإبداع والتكنولوجيا.</textarea>
-    </label>
-
-    <label>
-      رابط الصورة
-      <input id="photo" value="https://i.ibb.co/BxK1s4K/IMG-20260902-WA0141.jpg">
-    </label>
-
-  </div>
-</section>
-
-
-<section class="card" id="fields">
-
-  <div class="title">
-    <div>
-      <small>02 / FIELDS</small>
-      <h2>المجالات</h2>
-    </div>
-  </div>
-
-  <div class="grid">
-
-    <label>
-      المجال الأول
-      <input id="field1" value="الطب">
-    </label>
-
-    <label>
-      المجال الثاني
-      <input id="field2" value="البرمجة">
-    </label>
-
-    <label>
-      المجال الثالث
-      <input id="field3" value="التداول">
-    </label>
-
-  </div>
-</section>
-
-
-<section class="card" id="skills">
-
-  <div class="title">
-    <div>
-      <small>03 / SKILLS</small>
-      <h2>المهارات</h2>
-    </div>
-  </div>
-
-  <div class="skills">
-
-    <div class="skill">
-      <div>
-        <b>HTML / CSS</b>
-        <strong id="htmlValue">90%</strong>
-      </div>
-      <input id="htmlSkill" type="range" min="0" max="100" value="90">
-    </div>
-
-    <div class="skill">
-      <div>
-        <b>JavaScript</b>
-        <strong id="jsValue">80%</strong>
-      </div>
-      <input id="jsSkill" type="range" min="0" max="100" value="80">
-    </div>
-
-    <div class="skill">
-      <div>
-        <b>UI / UX</b>
-        <strong id="uiValue">85%</strong>
-      </div>
-      <input id="uiSkill" type="range" min="0" max="100" value="85">
-    </div>
-
-  </div>
-</section>
-
-
-<section class="card" id="contact">
-
-  <div class="title">
-    <div>
-      <small>04 / CONTACT</small>
-      <h2>بيانات التواصل</h2>
-    </div>
-  </div>
-
-  <div class="grid">
-
-    <label>
-      رقم الهاتف
-      <input id="phone" value="+20 128 168 9551">
-    </label>
-
-    <label>
-      رقم واتساب
-      <input id="whatsapp" value="201281689551">
-    </label>
-
-  </div>
-</section>
-
-
-<section class="card" id="design">
-
-  <div class="title">
-    <div>
-      <small>05 / DESIGN</small>
-      <h2>التصميم</h2>
-    </div>
-  </div>
-
-  <div class="color-box">
-
-    <label>
-      اللون الرئيسي
-      <input id="color" type="color" value="#00d4aa">
-    </label>
-
-    <div class="preview" id="colorPreview">
-      اللون الحالي
-    </div>
-
-  </div>
-
-</section>
-
-
-<footer>
-  DR. MOHAMED ALI — ADMIN PANEL
-</footer>
-
-</main>
 </div>
 
-<script src="admin.js"></script>
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://yzalkwkbnxapiiseqraj.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_McRUA7P1sOfa_x2LPxQB7A_kEmhJ-Vc";
+
+const API =
+SUPABASE_URL + "/rest/v1/site_content?id=eq.1";
+
+
+const headers = {
+"apikey": SUPABASE_KEY,
+"Authorization": "Bearer " + SUPABASE_KEY,
+"Content-Type": "application/json"
+};
+
+
+const fields = [
+"name",
+"roles",
+"description",
+"photo",
+"field1",
+"field2",
+"field3",
+"html_skill",
+"js_skill",
+"ui_skill",
+"phone",
+"whatsapp",
+"color"
+];
+
+
+async function loadData(){
+
+try{
+
+const response = await fetch(
+SUPABASE_URL + "/rest/v1/site_content?id=eq.1",
+{
+headers:{
+"apikey":SUPABASE_KEY,
+"Authorization":"Bearer "+SUPABASE_KEY
+}
+});
+
+const data = await response.json();
+
+if(!data.length){
+document.getElementById("message").textContent =
+"لم يتم العثور على البيانات";
+return;
+}
+
+const item = data[0];
+
+fields.forEach(field=>{
+
+const input =
+document.getElementById(field);
+
+if(input && item[field] !== null){
+input.value = item[field];
+}
+
+});
+
+}catch(error){
+
+document.getElementById("message").textContent =
+"حدث خطأ في الاتصال بقاعدة البيانات";
+
+console.error(error);
+
+}
+
+}
+
+
+async function saveData(){
+
+const data = {};
+
+fields.forEach(field=>{
+
+const input =
+document.getElementById(field);
+
+if(input){
+data[field] = input.value;
+}
+
+});
+
+try{
+
+const response = await fetch(
+API,
+{
+method:"PATCH",
+headers:{
+...headers,
+"Prefer":"return=minimal"
+},
+body:JSON.stringify(data)
+});
+
+if(response.ok){
+
+document.getElementById("message").textContent =
+"✅ تم حفظ التعديلات بنجاح";
+
+}else{
+
+const error =
+await response.text();
+
+console.error(error);
+
+document.getElementById("message").textContent =
+"❌ حدث خطأ أثناء الحفظ";
+
+}
+
+}catch(error){
+
+console.error(error);
+
+document.getElementById("message").textContent =
+"❌ لا يوجد اتصال بقاعدة البيانات";
+
+}
+
+}
+
+
+document
+.getElementById("save")
+.addEventListener("click",saveData);
+
+
+loadData();
+
+</script>
+
 </body>
 </html>
 ```
