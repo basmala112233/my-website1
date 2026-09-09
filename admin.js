@@ -1,153 +1,378 @@
 ```javascript
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-  const ids = [
-    "name",
-    "roles",
-    "description",
-    "photo",
-    "field1",
-    "field2",
-    "field3",
-    "htmlSkill",
-    "jsSkill",
-    "uiSkill",
-    "phone",
-    "whatsapp",
-    "color"
-  ];
+  const SUPABASE_URL =
+    "https://yzalkwkbnxapiiseqraj.supabase.co";
 
-  const defaults = {
-    name:"محمد علي",
-    roles:"طبيب × مبرمج × متداول",
-    description:"شغوف بالطب والتكنولوجيا والأسواق المالية، وأسعى لصناعة مستقبل يجمع بين العلم والإبداع والتكنولوجيا.",
-    photo:"https://i.ibb.co/BxK1s4K/IMG-20260902-WA0141.jpg",
-    field1:"الطب",
-    field2:"البرمجة",
-    field3:"التداول",
-    htmlSkill:"90",
-    jsSkill:"80",
-    uiSkill:"85",
-    phone:"+20 128 168 9551",
-    whatsapp:"201281689551",
-    color:"#00d4aa"
+  const SUPABASE_KEY =
+    "sb_publishable_McRUA7P1sOfa_x2LPxQB7A_kEmhJ-Vc";
+
+  const API =
+    SUPABASE_URL + "/rest/v1/site_content?id=eq.1";
+
+  const headers = {
+    apikey: SUPABASE_KEY,
+    Authorization: "Bearer " + SUPABASE_KEY
   };
 
 
-  /* تحميل البيانات */
+  /* =========================
+     تحميل بيانات الموقع
+  ========================= */
 
-  ids.forEach(id => {
+  async function loadSiteData() {
 
-    const input = document.getElementById(id);
+    try {
 
-    if(!input) return;
+      const response = await fetch(API, {
+        headers
+      });
 
-    const saved =
-      localStorage.getItem("admin_" + id);
+      const data = await response.json();
 
-    input.value =
-      saved !== null
-        ? saved
-        : defaults[id];
+      if (!data.length) return;
 
-  });
+      const site = data[0];
 
 
-  /* نسب المهارات */
+      /* الاسم */
 
-  function updateRange(id,valueId){
+      const heroName =
+        document.querySelector(".hero h1");
 
-    const range =
-      document.getElementById(id);
+      if (heroName && site.name) {
 
-    const value =
-      document.getElementById(valueId);
+        heroName.innerHTML =
+          `<span>د.</span> ${site.name.split(" ")[0]}
+          <strong>${site.name.split(" ").slice(1).join(" ")}</strong>`;
 
-    function update(){
-      value.textContent =
-        range.value + "%";
+      }
+
+
+      /* المسمى */
+
+      const roles =
+        document.querySelector(".roles");
+
+      if (roles && site.roles) {
+
+        roles.innerHTML =
+          `<span>${site.roles}</span>`;
+
+      }
+
+
+      /* الوصف */
+
+      const heroText =
+        document.querySelector(".hero-text");
+
+      if (heroText && site.description) {
+
+        heroText.textContent =
+          site.description;
+
+      }
+
+
+      /* الصورة */
+
+      const photo =
+        document.querySelector(".photo-card img");
+
+      if (photo && site.photo) {
+
+        photo.src =
+          site.photo;
+
+      }
+
+
+      /* المجالات */
+
+      const fieldCards =
+        document.querySelectorAll(".field-card");
+
+      const fields = [
+        site.field1,
+        site.field2,
+        site.field3
+      ];
+
+      fieldCards.forEach((card,index)=>{
+
+        if(fields[index]){
+
+          const title =
+            card.querySelector("h3");
+
+          if(title)
+            title.textContent =
+              fields[index];
+
+        }
+
+      });
+
+
+      /* المهارات */
+
+      const progress =
+        document.querySelectorAll(".progress i");
+
+      const skills = [
+        site.html_skill,
+        site.js_skill,
+        site.ui_skill
+      ];
+
+      progress.forEach((bar,index)=>{
+
+        if(skills[index] !== undefined){
+
+          bar.style.width =
+            skills[index] + "%";
+
+        }
+
+      });
+
+
+      /* رقم الهاتف */
+
+      const phone =
+        document.querySelector(".contact-number strong");
+
+      if(phone && site.phone){
+
+        phone.textContent =
+          site.phone;
+
+      }
+
+
+      /* واتساب */
+
+      const whatsappLinks =
+        document.querySelectorAll(
+          'a[href*="wa.me"]'
+        );
+
+      whatsappLinks.forEach(link=>{
+
+        if(site.whatsapp){
+
+          link.href =
+            "https://wa.me/" +
+            site.whatsapp;
+
+        }
+
+      });
+
+
+      /* اللون الرئيسي */
+
+      if(site.color){
+
+        document.documentElement
+          .style
+          .setProperty(
+            "--primary",
+            site.color
+          );
+
+      }
+
     }
 
-    range.addEventListener(
-      "input",
-      update
+    catch(error){
+
+      console.error(
+        "Supabase error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /* تشغيل تحميل البيانات */
+
+  loadSiteData();
+
+
+  /* =========================
+     القائمة للموبايل
+  ========================= */
+
+  const menuBtn =
+    document.getElementById("menuBtn");
+
+  const nav =
+    document.getElementById("nav");
+
+  if(menuBtn && nav){
+
+    menuBtn.addEventListener(
+      "click",
+      ()=>{
+        nav.classList.toggle("active");
+      }
     );
 
-    update();
-  }
+    nav.querySelectorAll("a")
+      .forEach(link=>{
 
-  updateRange(
-    "htmlSkill",
-    "htmlValue"
-  );
-
-  updateRange(
-    "jsSkill",
-    "jsValue"
-  );
-
-  updateRange(
-    "uiSkill",
-    "uiValue"
-  );
-
-
-  /* اللون */
-
-  const color =
-    document.getElementById("color");
-
-  const preview =
-    document.getElementById("colorPreview");
-
-  function updateColor(){
-
-    preview.style.background =
-      color.value;
-
-  }
-
-  color.addEventListener(
-    "input",
-    updateColor
-  );
-
-  updateColor();
-
-
-  /* الحفظ */
-
-  document
-    .getElementById("save")
-    .addEventListener("click", () => {
-
-      ids.forEach(id => {
-
-        const input =
-          document.getElementById(id);
-
-        if(!input) return;
-
-        localStorage.setItem(
-          "admin_" + id,
-          input.value
+        link.addEventListener(
+          "click",
+          ()=>{
+            nav.classList.remove("active");
+          }
         );
 
       });
 
-      const message =
-        document.getElementById("message");
+  }
 
-      message.textContent =
-        "✓ تم حفظ جميع التعديلات بنجاح";
 
-      message.classList.add("show");
+  /* =========================
+     Smooth Scroll
+  ========================= */
 
-      setTimeout(() => {
-        message.classList.remove("show");
-      },3000);
+  document.querySelectorAll(
+    'a[href^="#"]'
+  ).forEach(link=>{
 
-    });
+    link.addEventListener(
+      "click",
+      event=>{
+
+        const id =
+          link.getAttribute("href");
+
+        const target =
+          document.querySelector(id);
+
+        if(!target) return;
+
+        event.preventDefault();
+
+        target.scrollIntoView({
+          behavior:"smooth"
+        });
+
+      }
+    );
+
+  });
+
+
+  /* =========================
+     Header Scroll
+  ========================= */
+
+  const header =
+    document.querySelector(".header");
+
+  window.addEventListener(
+    "scroll",
+    ()=>{
+
+      if(!header) return;
+
+      if(window.scrollY > 40)
+        header.classList.add("scrolled");
+      else
+        header.classList.remove("scrolled");
+
+    }
+  );
+
+
+  /* =========================
+     Particles
+  ========================= */
+
+  const particles =
+    document.getElementById("particles");
+
+  if(particles){
+
+    const count =
+      window.innerWidth < 600
+      ? 25
+      : 45;
+
+    for(let i=0;i<count;i++){
+
+      const p =
+        document.createElement("span");
+
+      p.className = "particle";
+
+      p.style.left =
+        Math.random()*100 + "%";
+
+      p.style.top =
+        Math.random()*100 + "%";
+
+      p.style.animationDuration =
+        4 + Math.random()*7 + "s";
+
+      p.style.animationDelay =
+        Math.random()*5 + "s";
+
+      particles.appendChild(p);
+
+    }
+
+  }
+
+
+  /* =========================
+     Reveal
+  ========================= */
+
+  const reveal =
+    document.querySelectorAll(
+      ".section,.about-box,.field-card,.skill-box,.quote,.contact-card,footer"
+    );
+
+  reveal.forEach(el=>{
+    el.classList.add("premium-reveal");
+  });
+
+  const observer =
+    new IntersectionObserver(
+      entries=>{
+
+        entries.forEach(entry=>{
+
+          if(entry.isIntersecting){
+
+            entry.target.classList.add(
+              "visible"
+            );
+
+            observer.unobserve(
+              entry.target
+            );
+
+          }
+
+        });
+
+      },
+      {
+        threshold:.12
+      }
+    );
+
+  reveal.forEach(el=>{
+    observer.observe(el);
+  });
 
 });
 ```
