@@ -1,5 +1,5 @@
 ```javascript
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
 
   const SUPABASE_URL =
     "https://yzalkwkbnxapiiseqraj.supabase.co";
@@ -7,69 +7,56 @@ document.addEventListener("DOMContentLoaded", async () => {
   const SUPABASE_KEY =
     "sb_publishable_McRUA7P1sOfa_x2LPxQB7A_kEmhJ-Vc";
 
-  const API =
-    SUPABASE_URL + "/rest/v1/site_content?id=eq.1";
-
-  const headers = {
-    apikey: SUPABASE_KEY,
-    Authorization: "Bearer " + SUPABASE_KEY
-  };
-
-
-  /* =========================
-     تحميل بيانات الموقع
-  ========================= */
-
-  async function loadSiteData() {
+  async function loadWebsiteData() {
 
     try {
 
-      const response = await fetch(API, {
-        headers
-      });
+      const response = await fetch(
+        SUPABASE_URL + "/rest/v1/site_content?id=eq.1&select=*",
+        {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY
+          },
+          cache: "no-store"
+        }
+      );
 
       const data = await response.json();
 
-      if (!data.length) return;
+      console.log("Supabase:", data);
+
+      if (!data || !data.length) {
+        console.log("لا توجد بيانات");
+        return;
+      }
 
       const site = data[0];
 
 
       /* الاسم */
 
-      const heroName =
-        document.querySelector(".hero h1");
+      const name = document.querySelector(".hero h1");
 
-      if (heroName && site.name) {
+      if (name && site.name) {
 
-        heroName.innerHTML =
-          `<span>د.</span> ${site.name.split(" ")[0]}
-          <strong>${site.name.split(" ").slice(1).join(" ")}</strong>`;
+        const parts = site.name.trim().split(" ");
 
-      }
-
-
-      /* المسمى */
-
-      const roles =
-        document.querySelector(".roles");
-
-      if (roles && site.roles) {
-
-        roles.innerHTML =
-          `<span>${site.roles}</span>`;
+        name.innerHTML =
+          `<span>د.</span> ${parts[0] || ""} 
+           <strong>${parts.slice(1).join(" ")}</strong>`;
 
       }
 
 
       /* الوصف */
 
-      const heroText =
+      const description =
         document.querySelector(".hero-text");
 
-      if (heroText && site.description) {
+      if (description && site.description) {
 
-        heroText.textContent =
+        description.textContent =
           site.description;
 
       }
@@ -77,12 +64,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       /* الصورة */
 
-      const photo =
+      const image =
         document.querySelector(".photo-card img");
 
-      if (photo && site.photo) {
+      if (image && site.photo) {
 
-        photo.src =
+        image.src =
           site.photo;
 
       }
@@ -90,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       /* المجالات */
 
-      const fieldCards =
+      const cards =
         document.querySelectorAll(".field-card");
 
       const fields = [
@@ -99,16 +86,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         site.field3
       ];
 
-      fieldCards.forEach((card,index)=>{
+      cards.forEach((card, index) => {
 
-        if(fields[index]){
+        if (!fields[index]) return;
 
-          const title =
-            card.querySelector("h3");
+        const title =
+          card.querySelector("h3");
 
-          if(title)
-            title.textContent =
-              fields[index];
+        if (title) {
+
+          title.textContent =
+            fields[index];
 
         }
 
@@ -117,18 +105,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       /* المهارات */
 
-      const progress =
-        document.querySelectorAll(".progress i");
-
       const skills = [
         site.html_skill,
         site.js_skill,
         site.ui_skill
       ];
 
-      progress.forEach((bar,index)=>{
+      const bars =
+        document.querySelectorAll(".progress i");
 
-        if(skills[index] !== undefined){
+      bars.forEach((bar, index) => {
+
+        if (skills[index] !== null &&
+            skills[index] !== undefined) {
 
           bar.style.width =
             skills[index] + "%";
@@ -138,12 +127,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
 
-      /* رقم الهاتف */
+      /* الهاتف */
 
       const phone =
-        document.querySelector(".contact-number strong");
+        document.querySelector(
+          ".contact-number strong"
+        );
 
-      if(phone && site.phone){
+      if (phone && site.phone) {
 
         phone.textContent =
           site.phone;
@@ -153,30 +144,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       /* واتساب */
 
-      const whatsappLinks =
-        document.querySelectorAll(
-          'a[href*="wa.me"]'
-        );
+      document
+        .querySelectorAll('a[href*="wa.me"]')
+        .forEach(link => {
 
-      whatsappLinks.forEach(link=>{
+          if (site.whatsapp) {
 
-        if(site.whatsapp){
+            link.href =
+              "https://wa.me/" +
+              site.whatsapp;
 
-          link.href =
-            "https://wa.me/" +
-            site.whatsapp;
+          }
 
-        }
-
-      });
+        });
 
 
-      /* اللون الرئيسي */
+      /* اللون */
 
-      if(site.color){
+      if (site.color) {
 
-        document.documentElement
-          .style
+        document.documentElement.style
           .setProperty(
             "--primary",
             site.color
@@ -184,12 +171,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       }
 
-    }
-
-    catch(error){
+    } catch (error) {
 
       console.error(
-        "Supabase error:",
+        "خطأ Supabase:",
         error
       );
 
@@ -198,13 +183,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
 
-  /* تشغيل تحميل البيانات */
-
-  loadSiteData();
+  loadWebsiteData();
 
 
   /* =========================
-     القائمة للموبايل
+     MOBILE MENU
   ========================= */
 
   const menuBtn =
@@ -213,22 +196,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   const nav =
     document.getElementById("nav");
 
-  if(menuBtn && nav){
+  if (menuBtn && nav) {
 
     menuBtn.addEventListener(
       "click",
-      ()=>{
+      () => {
+
         nav.classList.toggle("active");
+
       }
     );
 
     nav.querySelectorAll("a")
-      .forEach(link=>{
+      .forEach(link => {
 
         link.addEventListener(
           "click",
-          ()=>{
+          () => {
+
             nav.classList.remove("active");
+
           }
         );
 
@@ -238,39 +225,39 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
   /* =========================
-     Smooth Scroll
+     SMOOTH SCROLL
   ========================= */
 
-  document.querySelectorAll(
-    'a[href^="#"]'
-  ).forEach(link=>{
+  document
+    .querySelectorAll('a[href^="#"]')
+    .forEach(link => {
 
-    link.addEventListener(
-      "click",
-      event=>{
+      link.addEventListener(
+        "click",
+        event => {
 
-        const id =
-          link.getAttribute("href");
+          const id =
+            link.getAttribute("href");
 
-        const target =
-          document.querySelector(id);
+          const target =
+            document.querySelector(id);
 
-        if(!target) return;
+          if (!target) return;
 
-        event.preventDefault();
+          event.preventDefault();
 
-        target.scrollIntoView({
-          behavior:"smooth"
-        });
+          target.scrollIntoView({
+            behavior: "smooth"
+          });
 
-      }
-    );
+        }
+      );
 
-  });
+    });
 
 
   /* =========================
-     Header Scroll
+     HEADER
   ========================= */
 
   const header =
@@ -278,101 +265,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   window.addEventListener(
     "scroll",
-    ()=>{
+    () => {
 
-      if(!header) return;
+      if (!header) return;
 
-      if(window.scrollY > 40)
+      if (window.scrollY > 40) {
+
         header.classList.add("scrolled");
-      else
+
+      } else {
+
         header.classList.remove("scrolled");
+
+      }
 
     }
   );
-
-
-  /* =========================
-     Particles
-  ========================= */
-
-  const particles =
-    document.getElementById("particles");
-
-  if(particles){
-
-    const count =
-      window.innerWidth < 600
-      ? 25
-      : 45;
-
-    for(let i=0;i<count;i++){
-
-      const p =
-        document.createElement("span");
-
-      p.className = "particle";
-
-      p.style.left =
-        Math.random()*100 + "%";
-
-      p.style.top =
-        Math.random()*100 + "%";
-
-      p.style.animationDuration =
-        4 + Math.random()*7 + "s";
-
-      p.style.animationDelay =
-        Math.random()*5 + "s";
-
-      particles.appendChild(p);
-
-    }
-
-  }
-
-
-  /* =========================
-     Reveal
-  ========================= */
-
-  const reveal =
-    document.querySelectorAll(
-      ".section,.about-box,.field-card,.skill-box,.quote,.contact-card,footer"
-    );
-
-  reveal.forEach(el=>{
-    el.classList.add("premium-reveal");
-  });
-
-  const observer =
-    new IntersectionObserver(
-      entries=>{
-
-        entries.forEach(entry=>{
-
-          if(entry.isIntersecting){
-
-            entry.target.classList.add(
-              "visible"
-            );
-
-            observer.unobserve(
-              entry.target
-            );
-
-          }
-
-        });
-
-      },
-      {
-        threshold:.12
-      }
-    );
-
-  reveal.forEach(el=>{
-    observer.observe(el);
-  });
 
 });
 ```
