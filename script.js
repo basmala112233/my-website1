@@ -1,352 +1,290 @@
 ```javascript
+/* =========================================================
+   DR. MOHAMED ALI
+   PORTFOLIO ANIMATION SYSTEM
+========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* =========================
-     SETTINGS
-  ========================= */
+  /* =======================================================
+     ELEMENTS
+  ======================================================= */
 
-  const defaultSettings = {
-    name: "محمد علي",
-    description:
-      "شغوف بالطب والتكنولوجيا والأسواق المالية، وأسعى لصناعة مستقبل يجمع بين العلم والإبداع والتكنولوجيا.",
-    photo:
-      "https://i.ibb.co/BxK1s4K/IMG-20260902-WA0141.jpg",
-    whatsapp: "201281689551",
-    phone: "+20 128 168 9551",
-    color: "#00d4aa",
-
-    htmlSkill: 90,
-    jsSkill: 80,
-    uiSkill: 85
-  };
-
-  const saved =
-    JSON.parse(localStorage.getItem("doctorWebsiteSettings") || "{}");
-
-  const settings = {
-    ...defaultSettings,
-    ...saved
-  };
+  const header = document.getElementById("header");
+  const menuBtn = document.getElementById("menuBtn");
+  const nav = document.getElementById("nav");
+  const particles = document.getElementById("particles");
+  const animatedRole = document.getElementById("animatedRole");
+  const year = document.getElementById("year");
 
 
-  /* =========================
-     APPLY SETTINGS
-  ========================= */
+  /* =======================================================
+     CURRENT YEAR
+  ======================================================= */
 
-  const heroName = document.querySelector(".hero h1");
-  if (heroName) {
-    heroName.innerHTML = `
-      <span>د.</span>
-      ${settings.name.split(" ")[0] || ""}
-      <strong>
-        ${settings.name.split(" ").slice(1).join(" ") || ""}
-      </strong>
-    `;
-  }
-
-  const description =
-    document.querySelector(".hero-text");
-
-  if (description) {
-    description.textContent = settings.description;
+  if (year) {
+    year.textContent = new Date().getFullYear();
   }
 
 
-  /* الصورة */
+  /* =======================================================
+     MOBILE MENU
+  ======================================================= */
 
-  const photo =
-    document.querySelector(".photo-card img");
+  if (menuBtn && nav) {
 
-  if (photo) {
-    photo.src = settings.photo;
+    menuBtn.addEventListener("click", () => {
+
+      nav.classList.toggle("active");
+
+      if (nav.classList.contains("active")) {
+        menuBtn.textContent = "✕";
+        menuBtn.setAttribute("aria-label", "إغلاق القائمة");
+      } else {
+        menuBtn.textContent = "☰";
+        menuBtn.setAttribute("aria-label", "فتح القائمة");
+      }
+
+    });
+
+
+    nav.querySelectorAll("a").forEach(link => {
+
+      link.addEventListener("click", () => {
+
+        nav.classList.remove("active");
+
+        menuBtn.textContent = "☰";
+
+        menuBtn.setAttribute(
+          "aria-label",
+          "فتح القائمة"
+        );
+
+      });
+
+    });
+
   }
 
 
-  /* الواتساب */
+  /* =======================================================
+     HEADER SCROLL
+  ======================================================= */
 
-  document.querySelectorAll(
-    'a[href*="wa.me"]'
-  ).forEach(link => {
-    link.href = `https://wa.me/${settings.whatsapp}`;
-  });
+  function handleHeader() {
 
+    if (!header) return;
 
-  /* رقم الهاتف */
+    if (window.scrollY > 40) {
+      header.classList.add("scrolled");
+    } else {
+      header.classList.remove("scrolled");
+    }
 
-  const phone =
-    document.querySelector(".contact-number strong");
-
-  if (phone) {
-    phone.textContent = settings.phone;
   }
 
-
-  /* اللون */
-
-  document.documentElement.style.setProperty(
-    "--main-color",
-    settings.color
+  window.addEventListener(
+    "scroll",
+    handleHeader,
+    { passive: true }
   );
 
-
-  /* =========================
-     MOBILE MENU
-  ========================= */
-
-  const menuBtn =
-    document.getElementById("menuBtn");
-
-  const nav =
-    document.getElementById("nav");
-
-  menuBtn?.addEventListener("click", () => {
-    nav?.classList.toggle("active");
-
-    menuBtn.textContent =
-      nav?.classList.contains("active")
-        ? "✕"
-        : "☰";
-  });
-
-  nav?.querySelectorAll("a").forEach(link => {
-    link.addEventListener("click", () => {
-      nav.classList.remove("active");
-      menuBtn.textContent = "☰";
-    });
-  });
+  handleHeader();
 
 
-  /* =========================
-     HERO ROLES
-  ========================= */
-
-  const rolesContainer =
-    document.querySelector(".roles");
-
-  if (rolesContainer) {
-
-    const roles = [
-      "طبيب",
-      "مبرمج",
-      "متداول"
-    ];
-
-    const role =
-      rolesContainer.querySelector(".animated-role") ||
-      document.createElement("span");
-
-    role.className = "animated-role";
-
-    rolesContainer.innerHTML = "";
-    rolesContainer.appendChild(role);
-
-    let index = 0;
-
-    function changeRole() {
-
-      role.style.opacity = "0";
-      role.style.transform =
-        "translateY(15px)";
-
-      setTimeout(() => {
-
-        role.textContent =
-          roles[index];
-
-        role.style.opacity = "1";
-        role.style.transform =
-          "translateY(0)";
-
-        index =
-          (index + 1) % roles.length;
-
-      }, 300);
-    }
-
-    changeRole();
-
-    setInterval(changeRole, 2200);
-  }
-
-
-  /* =========================
-     PARTICLES
-  ========================= */
-
-  const particles =
-    document.getElementById("particles");
-
-  if (particles) {
-
-    const count =
-      window.innerWidth < 600
-        ? 25
-        : 50;
-
-    for (let i = 0; i < count; i++) {
-
-      const particle =
-        document.createElement("span");
-
-      particle.className = "particle";
-
-      const size =
-        Math.random() * 2 + 1;
-
-      particle.style.width =
-        `${size}px`;
-
-      particle.style.height =
-        `${size}px`;
-
-      particle.style.left =
-        `${Math.random() * 100}%`;
-
-      particle.style.top =
-        `${Math.random() * 100}%`;
-
-      particle.style.animationDuration =
-        `${4 + Math.random() * 7}s`;
-
-      particle.style.animationDelay =
-        `${Math.random() * 5}s`;
-
-      particles.appendChild(particle);
-    }
-  }
-
-
-  /* =========================
-     REVEAL
-  ========================= */
+  /* =======================================================
+     SCROLL REVEAL
+  ======================================================= */
 
   const revealElements =
-    document.querySelectorAll(`
-      .section,
-      .about-box,
-      .field-card,
-      .skill-box,
-      .quote,
-      .contact-card,
-      footer
-    `);
-
-  revealElements.forEach(el => {
-    el.classList.add("premium-reveal");
-  });
+    document.querySelectorAll(".reveal");
 
   const revealObserver =
     new IntersectionObserver(
-      entries => {
+      (entries, observer) => {
 
         entries.forEach(entry => {
 
-          if (!entry.isIntersecting)
-            return;
+          if (!entry.isIntersecting) return;
 
-          entry.target.classList.add(
-            "visible"
-          );
+          entry.target.classList.add("show");
 
-          revealObserver.unobserve(
-            entry.target
-          );
+          observer.unobserve(entry.target);
 
         });
 
       },
       {
-        threshold: 0.12
+        threshold: 0.12,
+        rootMargin: "0px 0px -60px 0px"
       }
     );
 
-  revealElements.forEach(el => {
-    revealObserver.observe(el);
+
+  revealElements.forEach(element => {
+    revealObserver.observe(element);
   });
 
 
-  /* =========================
-     PROGRESS BARS
-  ========================= */
+  /* =======================================================
+     HERO ROLE ANIMATION
+  ======================================================= */
 
-  const skills = {
-    ".skill-box:nth-child(1) .skill-row:nth-child(1) i":
-      settings.htmlSkill + "%",
+  if (animatedRole) {
 
-    ".skill-box:nth-child(1) .skill-row:nth-child(2) i":
-      settings.jsSkill + "%",
+    const roles = [
+      "مبرمج",
+      "مطور مواقع",
+      "مهتم بالتقنية",
+      "متداول"
+    ];
 
-    ".skill-box:nth-child(1) .skill-row:nth-child(3) i":
-      settings.uiSkill + "%"
-  };
+    let roleIndex = 0;
 
-  Object.entries(skills).forEach(
-    ([selector, value]) => {
+    setInterval(() => {
 
-      const bar =
-        document.querySelector(selector);
+      animatedRole.classList.remove("show");
+      animatedRole.classList.add("hide");
 
-      if (bar) {
-        bar.style.width = value;
-        bar.dataset.width = value;
+      setTimeout(() => {
+
+        roleIndex++;
+
+        if (roleIndex >= roles.length) {
+          roleIndex = 0;
+        }
+
+        animatedRole.textContent =
+          roles[roleIndex];
+
+        animatedRole.classList.remove("hide");
+        animatedRole.classList.add("show");
+
+      }, 500);
+
+    }, 2500);
+
+  }
+
+
+  /* =======================================================
+     SKILL BARS
+  ======================================================= */
+
+  const progressBars =
+    document.querySelectorAll(".progress i");
+
+  const progressObserver =
+    new IntersectionObserver(
+      (entries, observer) => {
+
+        entries.forEach(entry => {
+
+          if (!entry.isIntersecting) return;
+
+          const bar = entry.target;
+
+          const width =
+            bar.dataset.width || "0%";
+
+          bar.style.setProperty(
+            "--progress-width",
+            width
+          );
+
+          setTimeout(() => {
+            bar.classList.add("loaded");
+          }, 150);
+
+          observer.unobserve(bar);
+
+        });
+
+      },
+      {
+        threshold: 0.5
       }
-
-    }
-  );
-
-
-  /* =========================
-     HEADER
-  ========================= */
-
-  const header =
-    document.querySelector(".header");
-
-  window.addEventListener("scroll", () => {
-
-    header?.classList.toggle(
-      "scrolled",
-      window.scrollY > 40
     );
 
+
+  progressBars.forEach(bar => {
+    progressObserver.observe(bar);
   });
 
 
-  /* =========================
-     ACTIVE NAV
-  ========================= */
+  /* =======================================================
+     CHART ANIMATION
+  ======================================================= */
+
+  const charts =
+    document.querySelectorAll(".chart");
+
+  const chartObserver =
+    new IntersectionObserver(
+      (entries, observer) => {
+
+        entries.forEach(entry => {
+
+          if (!entry.isIntersecting) return;
+
+          const chart = entry.target;
+
+          chart.classList.add("loaded");
+
+          observer.unobserve(chart);
+
+        });
+
+      },
+      {
+        threshold: 0.5
+      }
+    );
+
+
+  charts.forEach(chart => {
+    chartObserver.observe(chart);
+  });
+
+
+  /* =======================================================
+     ACTIVE NAVIGATION
+  ======================================================= */
 
   const sections =
-    document.querySelectorAll(
-      "main section[id]"
-    );
+    document.querySelectorAll("section[id]");
 
   const navLinks =
     document.querySelectorAll(".nav a");
 
-  const navObserver =
+  const sectionObserver =
     new IntersectionObserver(
       entries => {
 
         entries.forEach(entry => {
 
-          if (!entry.isIntersecting)
-            return;
+          if (!entry.isIntersecting) return;
 
-          navLinks.forEach(link =>
+          const id =
+            entry.target.getAttribute("id");
+
+          navLinks.forEach(link => {
+
             link.classList.remove(
               "active-link"
-            )
-          );
-
-          const active =
-            document.querySelector(
-              `.nav a[href="#${entry.target.id}"]`
             );
 
-          active?.classList.add(
-            "active-link"
-          );
+            if (
+              link.getAttribute("href") ===
+              `#${id}`
+            ) {
+              link.classList.add(
+                "active-link"
+              );
+            }
+
+          });
 
         });
 
@@ -356,94 +294,301 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     );
 
-  sections.forEach(section =>
-    navObserver.observe(section)
-  );
+
+  sections.forEach(section => {
+    sectionObserver.observe(section);
+  });
 
 
-  /* =========================
-     CARD TILT
-  ========================= */
+  /* =======================================================
+     PARTICLES
+  ======================================================= */
 
-  if (window.innerWidth > 850) {
+  if (particles) {
 
-    document
-      .querySelectorAll(
-        ".field-card, .skill-box"
-      )
-      .forEach(card => {
+    const particleCount =
+      window.innerWidth <= 600 ? 35 : 70;
 
-        card.addEventListener(
-          "mousemove",
-          e => {
+    for (
+      let i = 0;
+      i < particleCount;
+      i++
+    ) {
 
-            const rect =
-              card.getBoundingClientRect();
+      const particle =
+        document.createElement("span");
 
-            const x =
-              e.clientX - rect.left;
+      particle.className = "particle";
 
-            const y =
-              e.clientY - rect.top;
+      particle.style.left =
+        Math.random() * 100 + "%";
 
-            const rotateX =
-              ((y - rect.height / 2) /
-                (rect.height / 2)) * -3;
+      particle.style.top =
+        Math.random() * 100 + "%";
 
-            const rotateY =
-              ((x - rect.width / 2) /
-                (rect.width / 2)) * 3;
+      particle.style.animationDuration =
+        (4 + Math.random() * 7) + "s";
 
-            card.style.transform =
-              `perspective(900px)
-               rotateX(${rotateX}deg)
-               rotateY(${rotateY}deg)
-               translateY(-5px)`;
-          }
-        );
+      particle.style.animationDelay =
+        (-Math.random() * 8) + "s";
 
-        card.addEventListener(
-          "mouseleave",
-          () => {
-            card.style.transform = "";
-          }
-        );
+      particle.style.opacity =
+        (0.1 + Math.random() * 0.5);
 
-      });
+      particles.appendChild(particle);
+
+    }
+
   }
 
 
-  /* =========================
-     SMOOTH SCROLL
-  ========================= */
+  /* =======================================================
+     MOUSE PARALLAX HERO
+  ======================================================= */
+
+  const visual =
+    document.querySelector(".hero-visual");
+
+  const photo =
+    document.querySelector(".photo-card");
+
+  if (
+    visual &&
+    photo &&
+    window.matchMedia(
+      "(pointer: fine)"
+    ).matches
+  ) {
+
+    visual.addEventListener(
+      "mousemove",
+      event => {
+
+        const rect =
+          visual.getBoundingClientRect();
+
+        const x =
+          event.clientX - rect.left;
+
+        const y =
+          event.clientY - rect.top;
+
+        const moveX =
+          (x / rect.width - 0.5) * 14;
+
+        const moveY =
+          (y / rect.height - 0.5) * 14;
+
+        photo.style.transform =
+          `translate(${moveX}px, ${moveY}px) rotate(-1deg)`;
+
+      }
+    );
+
+
+    visual.addEventListener(
+      "mouseleave",
+      () => {
+
+        photo.style.transform = "";
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     SMOOTH BUTTON EFFECT
+  ======================================================= */
 
   document
-    .querySelectorAll(
-      'a[href^="#"]'
-    )
-    .forEach(link => {
+    .querySelectorAll(".btn, .contact-btn")
+    .forEach(button => {
 
-      link.addEventListener(
-        "click",
-        e => {
+      button.addEventListener(
+        "mousemove",
+        event => {
 
-          const target =
-            document.querySelector(
-              link.getAttribute("href")
-            );
+          const rect =
+            button.getBoundingClientRect();
 
-          if (!target) return;
+          const x =
+            event.clientX - rect.left;
 
-          e.preventDefault();
+          const y =
+            event.clientY - rect.top;
 
-          target.scrollIntoView({
-            behavior: "smooth"
-          });
+          button.style.setProperty(
+            "--mouse-x",
+            `${x}px`
+          );
+
+          button.style.setProperty(
+            "--mouse-y",
+            `${y}px`
+          );
 
         }
       );
 
     });
+
+
+  /* =======================================================
+     CARD TILT
+  ======================================================= */
+
+  const cards =
+    document.querySelectorAll(
+      ".field-card, .skill-box"
+    );
+
+  if (
+    window.matchMedia(
+      "(pointer: fine)"
+    ).matches
+  ) {
+
+    cards.forEach(card => {
+
+      card.addEventListener(
+        "mousemove",
+        event => {
+
+          const rect =
+            card.getBoundingClientRect();
+
+          const x =
+            event.clientX - rect.left;
+
+          const y =
+            event.clientY - rect.top;
+
+          const rotateX =
+            ((y / rect.height) - 0.5) * -5;
+
+          const rotateY =
+            ((x / rect.width) - 0.5) * 5;
+
+          card.style.transform =
+            `perspective(800px)
+             rotateX(${rotateX}deg)
+             rotateY(${rotateY}deg)
+             translateY(-8px)`;
+
+        }
+      );
+
+
+      card.addEventListener(
+        "mouseleave",
+        () => {
+
+          card.style.transform = "";
+
+        }
+      );
+
+    });
+
+  }
+
+
+  /* =======================================================
+     COUNTERS
+  ======================================================= */
+
+  const counters =
+    document.querySelectorAll(
+      "[data-counter]"
+    );
+
+  const counterObserver =
+    new IntersectionObserver(
+      (entries, observer) => {
+
+        entries.forEach(entry => {
+
+          if (!entry.isIntersecting) return;
+
+          const counter =
+            entry.target;
+
+          const target =
+            Number(
+              counter.dataset.counter
+            );
+
+          let current = 0;
+
+          const duration = 1200;
+
+          const start =
+            performance.now();
+
+          function animateCounter(now) {
+
+            const progress =
+              Math.min(
+                (now - start) / duration,
+                1
+              );
+
+            current =
+              Math.floor(
+                progress * target
+              );
+
+            if (target === 100) {
+              counter.textContent =
+                current + "%";
+            } else {
+              counter.textContent =
+                String(current).padStart(2, "0");
+            }
+
+            if (progress < 1) {
+              requestAnimationFrame(
+                animateCounter
+              );
+            }
+
+          }
+
+          requestAnimationFrame(
+            animateCounter
+          );
+
+          observer.unobserve(counter);
+
+        });
+
+      },
+      {
+        threshold: 0.8
+      }
+    );
+
+
+  counters.forEach(counter => {
+    counterObserver.observe(counter);
+  });
+
+
+  /* =======================================================
+     CONSOLE
+  ======================================================= */
+
+  console.log(
+    "%cDR. MOHAMED ALI",
+    "color:#00d4aa;font-size:24px;font-weight:bold;"
+  );
+
+  console.log(
+    "%cDoctor × Programmer × Trader",
+    "color:#8da2b8;font-size:14px;"
+  );
 
 });
 ```
