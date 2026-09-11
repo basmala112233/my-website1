@@ -1,76 +1,48 @@
 ```javascript
 /* =========================================================
-   DR. MOHAMED ALI
-   PORTFOLIO ANIMATION SYSTEM
+   DR. MOHAMED ALI — MAIN JAVASCRIPT
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =======================================================
-     ELEMENTS
-  ======================================================= */
-
-  const header = document.getElementById("header");
-  const menuBtn = document.getElementById("menuBtn");
-  const nav = document.getElementById("nav");
-  const particles = document.getElementById("particles");
-  const animatedRole = document.getElementById("animatedRole");
-  const year = document.getElementById("year");
-
-
-  /* =======================================================
-     CURRENT YEAR
-  ======================================================= */
-
-  if (year) {
-    year.textContent = new Date().getFullYear();
-  }
-
-
-  /* =======================================================
      MOBILE MENU
   ======================================================= */
+
+  const menuBtn = document.getElementById("menuBtn");
+  const nav = document.getElementById("nav");
 
   if (menuBtn && nav) {
 
     menuBtn.addEventListener("click", () => {
-
       nav.classList.toggle("active");
 
-      if (nav.classList.contains("active")) {
-        menuBtn.textContent = "✕";
-        menuBtn.setAttribute("aria-label", "إغلاق القائمة");
-      } else {
-        menuBtn.textContent = "☰";
-        menuBtn.setAttribute("aria-label", "فتح القائمة");
-      }
+      const isOpen = nav.classList.contains("active");
 
+      menuBtn.innerHTML = isOpen ? "✕" : "☰";
+      menuBtn.setAttribute(
+        "aria-label",
+        isOpen ? "إغلاق القائمة" : "فتح القائمة"
+      );
     });
 
-
+    // إغلاق القائمة عند الضغط على أي رابط
     nav.querySelectorAll("a").forEach(link => {
-
       link.addEventListener("click", () => {
-
         nav.classList.remove("active");
 
-        menuBtn.textContent = "☰";
-
-        menuBtn.setAttribute(
-          "aria-label",
-          "فتح القائمة"
-        );
-
+        menuBtn.innerHTML = "☰";
+        menuBtn.setAttribute("aria-label", "فتح القائمة");
       });
-
     });
-
   }
 
 
   /* =======================================================
-     HEADER SCROLL
+     HEADER ON SCROLL
   ======================================================= */
+
+  const header = document.querySelector(".header");
 
   function handleHeader() {
 
@@ -81,45 +53,137 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       header.classList.remove("scrolled");
     }
-
   }
 
-  window.addEventListener(
-    "scroll",
-    handleHeader,
-    { passive: true }
-  );
+  window.addEventListener("scroll", handleHeader, {
+    passive: true
+  });
 
   handleHeader();
+
+
+  /* =======================================================
+     HERO SEQUENCE
+  ======================================================= */
+
+  const heroElements = [
+    document.querySelector(".eyebrow"),
+    document.querySelector(".hero h1"),
+    document.querySelector(".roles"),
+    document.querySelector(".hero-text"),
+    document.querySelector(".hero-actions"),
+    document.querySelector(".stats")
+  ];
+
+  heroElements.forEach((element, index) => {
+
+    if (!element) return;
+
+    element.classList.add("hero-sequence");
+
+    element.style.animationDelay = `${index * 0.14}s`;
+  });
+
+
+  /* =======================================================
+     ANIMATED ROLES
+  ======================================================= */
+
+  const rolesContainer = document.querySelector(".roles");
+
+  if (rolesContainer) {
+
+    const roleItems = [
+      "طبيب",
+      "مبرمج",
+      "متداول"
+    ];
+
+    const spans = rolesContainer.querySelectorAll("span");
+
+    let currentRole = 0;
+
+    function showRole() {
+
+      spans.forEach(span => {
+        span.classList.remove("animated-role", "show");
+      });
+
+      const target = spans[currentRole];
+
+      if (target) {
+
+        target.classList.add("animated-role");
+
+        setTimeout(() => {
+          target.classList.add("show");
+        }, 50);
+      }
+
+      currentRole++;
+
+      if (currentRole >= roleItems.length) {
+        currentRole = 0;
+      }
+    }
+
+    // لو عدد الـ spans مطابق
+    if (spans.length >= 3) {
+
+      spans.forEach((span, index) => {
+
+        span.classList.add("animated-role");
+
+        span.style.transitionDelay = `${index * 0.15}s`;
+
+      });
+
+      setTimeout(() => {
+        spans.forEach(span => {
+          span.classList.add("show");
+        });
+      }, 800);
+    }
+  }
 
 
   /* =======================================================
      SCROLL REVEAL
   ======================================================= */
 
-  const revealElements =
-    document.querySelectorAll(".reveal");
+  const revealElements = document.querySelectorAll(
+    ".section-title, " +
+    ".about-box, " +
+    ".field-card, " +
+    ".skill-box, " +
+    ".vision-card, " +
+    ".quote, " +
+    ".contact-card"
+  );
 
-  const revealObserver =
-    new IntersectionObserver(
-      (entries, observer) => {
+  revealElements.forEach(element => {
+    element.classList.add("reveal");
+  });
 
-        entries.forEach(entry => {
 
-          if (!entry.isIntersecting) return;
+  const revealObserver = new IntersectionObserver(
+    (entries, observer) => {
 
-          entry.target.classList.add("show");
+      entries.forEach(entry => {
 
-          observer.unobserve(entry.target);
+        if (!entry.isIntersecting) return;
 
-        });
+        entry.target.classList.add("show");
 
-      },
-      {
-        threshold: 0.12,
-        rootMargin: "0px 0px -60px 0px"
-      }
-    );
+        observer.unobserve(entry.target);
+      });
+
+    },
+    {
+      threshold: 0.12,
+      rootMargin: "0px 0px -60px 0px"
+    }
+  );
 
 
   revealElements.forEach(element => {
@@ -128,84 +192,94 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     HERO ROLE ANIMATION
+     STAGGER CARDS
   ======================================================= */
 
-  if (animatedRole) {
+  const cardGroups = [
+    ".field-card",
+    ".vision-card",
+    ".skill-box",
+    ".market-grid > div",
+    ".stats .stat"
+  ];
 
-    const roles = [
-      "مبرمج",
-      "مطور مواقع",
-      "مهتم بالتقنية",
-      "متداول"
-    ];
+  cardGroups.forEach(selector => {
 
-    let roleIndex = 0;
+    const cards = document.querySelectorAll(selector);
 
-    setInterval(() => {
+    cards.forEach((card, index) => {
 
-      animatedRole.classList.remove("show");
-      animatedRole.classList.add("hide");
+      card.style.transitionDelay = `${index * 0.12}s`;
 
-      setTimeout(() => {
+      card.classList.add("premium-reveal");
+    });
+  });
 
-        roleIndex++;
 
-        if (roleIndex >= roles.length) {
-          roleIndex = 0;
-        }
+  const premiumElements = document.querySelectorAll(
+    ".premium-reveal"
+  );
 
-        animatedRole.textContent =
-          roles[roleIndex];
+  const premiumObserver = new IntersectionObserver(
+    (entries, observer) => {
 
-        animatedRole.classList.remove("hide");
-        animatedRole.classList.add("show");
+      entries.forEach(entry => {
 
-      }, 500);
+        if (!entry.isIntersecting) return;
 
-    }, 2500);
+        entry.target.classList.add("visible");
 
-  }
+        observer.unobserve(entry.target);
+      });
+
+    },
+    {
+      threshold: 0.1
+    }
+  );
+
+
+  premiumElements.forEach(element => {
+    premiumObserver.observe(element);
+  });
 
 
   /* =======================================================
-     SKILL BARS
+     SKILLS PROGRESS
   ======================================================= */
 
-  const progressBars =
-    document.querySelectorAll(".progress i");
+  const progressBars = document.querySelectorAll(
+    ".progress i"
+  );
 
-  const progressObserver =
-    new IntersectionObserver(
-      (entries, observer) => {
+  const progressObserver = new IntersectionObserver(
+    (entries, observer) => {
 
-        entries.forEach(entry => {
+      entries.forEach(entry => {
 
-          if (!entry.isIntersecting) return;
+        if (!entry.isIntersecting) return;
 
-          const bar = entry.target;
+        const bar = entry.target;
 
-          const width =
-            bar.dataset.width || "0%";
+        const width = bar.dataset.width;
 
+        if (width) {
           bar.style.setProperty(
             "--progress-width",
             width
           );
 
-          setTimeout(() => {
-            bar.classList.add("loaded");
-          }, 150);
+          bar.classList.add("loaded");
+        }
 
-          observer.unobserve(bar);
+        observer.unobserve(bar);
+      });
 
-        });
-
-      },
-      {
-        threshold: 0.5
-      }
-    );
+    },
+    {
+      threshold: 0.5
+    }
+  );
 
 
   progressBars.forEach(bar => {
@@ -214,33 +288,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     CHART ANIMATION
+     TRADING CHART
   ======================================================= */
 
-  const charts =
-    document.querySelectorAll(".chart");
+  const charts = document.querySelectorAll(".chart");
 
-  const chartObserver =
-    new IntersectionObserver(
-      (entries, observer) => {
+  const chartObserver = new IntersectionObserver(
+    (entries, observer) => {
 
-        entries.forEach(entry => {
+      entries.forEach(entry => {
 
-          if (!entry.isIntersecting) return;
+        if (!entry.isIntersecting) return;
 
-          const chart = entry.target;
+        entry.target.classList.add("loaded");
 
-          chart.classList.add("loaded");
+        observer.unobserve(entry.target);
+      });
 
-          observer.unobserve(chart);
-
-        });
-
-      },
-      {
-        threshold: 0.5
-      }
-    );
+    },
+    {
+      threshold: 0.4
+    }
+  );
 
 
   charts.forEach(chart => {
@@ -252,47 +321,45 @@ document.addEventListener("DOMContentLoaded", () => {
      ACTIVE NAVIGATION
   ======================================================= */
 
-  const sections =
-    document.querySelectorAll("section[id]");
+  const sections = document.querySelectorAll(
+    "main section[id]"
+  );
 
-  const navLinks =
-    document.querySelectorAll(".nav a");
+  const navLinks = document.querySelectorAll(
+    ".nav a"
+  );
 
-  const sectionObserver =
-    new IntersectionObserver(
-      entries => {
 
-        entries.forEach(entry => {
+  const sectionObserver = new IntersectionObserver(
+    entries => {
 
-          if (!entry.isIntersecting) return;
+      entries.forEach(entry => {
 
-          const id =
-            entry.target.getAttribute("id");
+        if (!entry.isIntersecting) return;
 
-          navLinks.forEach(link => {
+        const currentId = entry.target.id;
 
-            link.classList.remove(
-              "active-link"
-            );
+        navLinks.forEach(link => {
 
-            if (
-              link.getAttribute("href") ===
-              `#${id}`
-            ) {
-              link.classList.add(
-                "active-link"
-              );
-            }
+          link.classList.remove("active-link");
 
-          });
+          if (
+            link.getAttribute("href") ===
+            `#${currentId}`
+          ) {
+            link.classList.add("active-link");
+          }
 
         });
 
-      },
-      {
-        threshold: 0.45
-      }
-    );
+      });
+
+    },
+    {
+      threshold: 0.25,
+      rootMargin: "-20% 0px -55% 0px"
+    }
+  );
 
 
   sections.forEach(section => {
@@ -304,16 +371,17 @@ document.addEventListener("DOMContentLoaded", () => {
      PARTICLES
   ======================================================= */
 
-  if (particles) {
+  const particlesContainer =
+    document.getElementById("particles");
+
+
+  if (particlesContainer) {
 
     const particleCount =
-      window.innerWidth <= 600 ? 35 : 70;
+      window.innerWidth < 600 ? 25 : 55;
 
-    for (
-      let i = 0;
-      i < particleCount;
-      i++
-    ) {
+
+    for (let i = 0; i < particleCount; i++) {
 
       const particle =
         document.createElement("span");
@@ -321,136 +389,132 @@ document.addEventListener("DOMContentLoaded", () => {
       particle.className = "particle";
 
       particle.style.left =
-        Math.random() * 100 + "%";
+        `${Math.random() * 100}%`;
 
       particle.style.top =
-        Math.random() * 100 + "%";
+        `${Math.random() * 100}%`;
+
+      const size =
+        Math.random() * 2 + 1;
+
+      particle.style.width =
+        `${size}px`;
+
+      particle.style.height =
+        `${size}px`;
 
       particle.style.animationDuration =
-        (4 + Math.random() * 7) + "s";
+        `${Math.random() * 5 + 4}s`;
 
       particle.style.animationDelay =
-        (-Math.random() * 8) + "s";
+        `${Math.random() * 5}s`;
 
-      particle.style.opacity =
-        (0.1 + Math.random() * 0.5);
-
-      particles.appendChild(particle);
-
+      particlesContainer.appendChild(
+        particle
+      );
     }
-
   }
 
 
   /* =======================================================
-     MOUSE PARALLAX HERO
+     MOUSE PARALLAX
   ======================================================= */
 
-  const visual =
+  const heroVisual =
     document.querySelector(".hero-visual");
 
-  const photo =
-    document.querySelector(".photo-card");
 
   if (
-    visual &&
-    photo &&
-    window.matchMedia(
-      "(pointer: fine)"
-    ).matches
+    heroVisual &&
+    window.matchMedia("(min-width: 851px)").matches
   ) {
 
-    visual.addEventListener(
+    heroVisual.addEventListener(
       "mousemove",
       event => {
 
         const rect =
-          visual.getBoundingClientRect();
+          heroVisual.getBoundingClientRect();
 
         const x =
-          event.clientX - rect.left;
+          (event.clientX - rect.left) /
+          rect.width - 0.5;
 
         const y =
-          event.clientY - rect.top;
+          (event.clientY - rect.top) /
+          rect.height - 0.5;
 
-        const moveX =
-          (x / rect.width - 0.5) * 14;
 
-        const moveY =
-          (y / rect.height - 0.5) * 14;
+        const photo =
+          heroVisual.querySelector(".photo-card");
 
-        photo.style.transform =
-          `translate(${moveX}px, ${moveY}px) rotate(-1deg)`;
+        const tags =
+          heroVisual.querySelectorAll(
+            ".floating-tag"
+          );
+
+
+        if (photo) {
+
+          photo.style.transform =
+            `translate(${x * 8}px, ${y * 8}px) rotate(${x * -2}deg)`;
+        }
+
+
+        tags.forEach((tag, index) => {
+
+          const power =
+            (index + 1) * 7;
+
+          tag.style.transform =
+            `translate(${x * power}px, ${y * power}px)`;
+        });
 
       }
     );
 
 
-    visual.addEventListener(
+    heroVisual.addEventListener(
       "mouseleave",
       () => {
 
-        photo.style.transform = "";
+        const photo =
+          heroVisual.querySelector(".photo-card");
+
+        const tags =
+          heroVisual.querySelectorAll(
+            ".floating-tag"
+          );
+
+
+        if (photo) {
+          photo.style.transform = "";
+        }
+
+        tags.forEach(tag => {
+          tag.style.transform = "";
+        });
 
       }
     );
-
   }
 
 
   /* =======================================================
-     SMOOTH BUTTON EFFECT
+     CARD 3D TILT
   ======================================================= */
 
-  document
-    .querySelectorAll(".btn, .contact-btn")
-    .forEach(button => {
-
-      button.addEventListener(
-        "mousemove",
-        event => {
-
-          const rect =
-            button.getBoundingClientRect();
-
-          const x =
-            event.clientX - rect.left;
-
-          const y =
-            event.clientY - rect.top;
-
-          button.style.setProperty(
-            "--mouse-x",
-            `${x}px`
-          );
-
-          button.style.setProperty(
-            "--mouse-y",
-            `${y}px`
-          );
-
-        }
-      );
-
-    });
-
-
-  /* =======================================================
-     CARD TILT
-  ======================================================= */
-
-  const cards =
+  const tiltCards =
     document.querySelectorAll(
-      ".field-card, .skill-box"
+      ".field-card, .vision-card"
     );
 
+
   if (
-    window.matchMedia(
-      "(pointer: fine)"
-    ).matches
+    window.matchMedia("(min-width: 851px)").matches
   ) {
 
-    cards.forEach(card => {
+    tiltCards.forEach(card => {
 
       card.addEventListener(
         "mousemove",
@@ -465,18 +529,24 @@ document.addEventListener("DOMContentLoaded", () => {
           const y =
             event.clientY - rect.top;
 
+          const centerX =
+            rect.width / 2;
+
+          const centerY =
+            rect.height / 2;
+
           const rotateX =
-            ((y / rect.height) - 0.5) * -5;
+            ((y - centerY) / centerY) * -3;
 
           const rotateY =
-            ((x / rect.width) - 0.5) * 5;
+            ((x - centerX) / centerX) * 3;
+
 
           card.style.transform =
-            `perspective(800px)
+            `perspective(900px)
              rotateX(${rotateX}deg)
              rotateY(${rotateY}deg)
              translateY(-8px)`;
-
         }
       );
 
@@ -491,43 +561,102 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
     });
-
   }
 
 
   /* =======================================================
-     COUNTERS
+     SMOOTH SCROLL
+  ======================================================= */
+
+  document
+    .querySelectorAll('a[href^="#"]')
+    .forEach(link => {
+
+      link.addEventListener(
+        "click",
+        event => {
+
+          const targetId =
+            link.getAttribute("href");
+
+          if (
+            !targetId ||
+            targetId === "#"
+          ) {
+            return;
+          }
+
+
+          const target =
+            document.querySelector(targetId);
+
+
+          if (!target) return;
+
+
+          event.preventDefault();
+
+
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+
+        }
+      );
+
+    });
+
+
+  /* =======================================================
+     COUNTER ANIMATION
   ======================================================= */
 
   const counters =
     document.querySelectorAll(
-      "[data-counter]"
+      ".stat strong"
     );
 
-  const counterObserver =
-    new IntersectionObserver(
-      (entries, observer) => {
 
-        entries.forEach(entry => {
+  counters.forEach(counter => {
 
-          if (!entry.isIntersecting) return;
+    const text =
+      counter.textContent.trim();
 
-          const counter =
-            entry.target;
+    if (
+      text === "∞" ||
+      text.includes("%")
+    ) {
+      return;
+    }
 
-          const target =
-            Number(
-              counter.dataset.counter
-            );
+    const target =
+      parseInt(text, 10);
+
+    if (isNaN(target)) return;
+
+
+    counter.textContent = "00";
+
+
+    const counterObserver =
+      new IntersectionObserver(
+        entries => {
+
+          if (!entries[0].isIntersecting) {
+            return;
+          }
+
 
           let current = 0;
 
-          const duration = 1200;
+          const duration = 1000;
 
           const start =
             performance.now();
 
-          function animateCounter(now) {
+
+          function update(now) {
 
             const progress =
               Math.min(
@@ -535,45 +664,195 @@ document.addEventListener("DOMContentLoaded", () => {
                 1
               );
 
+
             current =
               Math.floor(
                 progress * target
               );
 
-            if (target === 100) {
-              counter.textContent =
-                current + "%";
-            } else {
-              counter.textContent =
-                String(current).padStart(2, "0");
-            }
+
+            counter.textContent =
+              String(current).padStart(2, "0");
+
 
             if (progress < 1) {
-              requestAnimationFrame(
-                animateCounter
-              );
-            }
 
+              requestAnimationFrame(update);
+
+            } else {
+
+              counter.textContent =
+                String(target).padStart(2, "0");
+            }
           }
 
-          requestAnimationFrame(
-            animateCounter
-          );
 
-          observer.unobserve(counter);
+          requestAnimationFrame(update);
 
-        });
+          counterObserver.disconnect();
 
-      },
-      {
-        threshold: 0.8
+        },
+        {
+          threshold: 0.8
+        }
+      );
+
+
+    counterObserver.observe(counter);
+
+  });
+
+
+  /* =======================================================
+     VISION CHART EXTRA EFFECT
+  ======================================================= */
+
+  const tradingCards =
+    document.querySelectorAll(
+      ".trading-animation"
+    );
+
+
+  tradingCards.forEach(card => {
+
+    card.addEventListener(
+      "mouseenter",
+      () => {
+
+        const svg =
+          card.querySelector("svg");
+
+        if (svg) {
+          svg.style.transform =
+            "scale(1.05)";
+        }
+
       }
     );
 
 
-  counters.forEach(counter => {
-    counterObserver.observe(counter);
+    card.addEventListener(
+      "mouseleave",
+      () => {
+
+        const svg =
+          card.querySelector("svg");
+
+        if (svg) {
+          svg.style.transform =
+            "";
+        }
+
+      }
+    );
+
   });
+
+
+  /* =======================================================
+     PHOTO LOADING EFFECT
+  ======================================================= */
+
+  const photo =
+    document.querySelector(
+      ".photo-card img"
+    );
+
+
+  if (photo) {
+
+    photo.addEventListener(
+      "load",
+      () => {
+
+        photo.classList.add(
+          "image-loaded"
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     WHATSAPP FLOAT BUTTON
+  ======================================================= */
+
+  const whatsapp =
+    document.querySelector(
+      ".whatsapp-float"
+    );
+
+
+  if (whatsapp) {
+
+    whatsapp.addEventListener(
+      "mouseenter",
+      () => {
+
+        whatsapp.style.animationPlayState =
+          "paused";
+
+      }
+    );
+
+
+    whatsapp.addEventListener(
+      "mouseleave",
+      () => {
+
+        whatsapp.style.animationPlayState =
+          "running";
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     CURSOR GLOW
+  ======================================================= */
+
+  if (
+    window.matchMedia("(min-width: 851px)").matches
+  ) {
+
+    const cursorGlow =
+      document.createElement("div");
+
+    cursorGlow.className =
+      "cursor-glow";
+
+    document.body.appendChild(
+      cursorGlow
+    );
+
+
+    document.addEventListener(
+      "mousemove",
+      event => {
+
+        cursorGlow.style.left =
+          `${event.clientX}px`;
+
+        cursorGlow.style.top =
+          `${event.clientY}px`;
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     PAGE LOADED
+  ======================================================= */
+
+  document.body.classList.add(
+    "page-loaded"
+  );
 
 
   /* =======================================================
@@ -581,13 +860,13 @@ document.addEventListener("DOMContentLoaded", () => {
   ======================================================= */
 
   console.log(
-    "%cDR. MOHAMED ALI",
-    "color:#00d4aa;font-size:24px;font-weight:bold;"
+    "%c DR. MOHAMED ALI ",
+    "background:#00d4aa;color:#04110e;font-size:16px;font-weight:bold;padding:8px 15px;border-radius:5px;"
   );
 
   console.log(
-    "%cDoctor × Programmer × Trader",
-    "color:#8da2b8;font-size:14px;"
+    "%c طبيب × مبرمج × متداول ",
+    "color:#00d4aa;font-size:13px;font-weight:bold;"
   );
 
 });
